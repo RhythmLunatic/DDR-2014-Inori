@@ -34,11 +34,4 @@ if PROFILEMAN:GetNumLocalProfiles() <1 then
 	};
 end
 
-t[#t+1] = Def.ActorFrame{
-	LoadActor( "../ScreenLogo overlay/sponsor.png" )..{
-	    InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;),
-		OnCommand=cmd(diffusealpha,1);
-	};
-};
-
 return t

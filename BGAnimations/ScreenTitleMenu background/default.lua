@@ -46,31 +46,6 @@ return Def.ActorFrame{
 	LoadActor( "konami_copyright" )..{
 		OnCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;sleep,0.916;linear,0.4);
 	};
-	-- eamusement titre --
-    LoadActor( "eam2.png" )..{
-		InitCommand=function(self)
-		if GAMESTATE:GetCoinMode() == 'CoinMode_Home' then
-			self:visible(false);
-		else
-			self:visible(true);
-			self:Center();
-		end;
-		end;
-		OnCommand=cmd(diffusealpha,1);
-
-	};
-	LoadActor( "eam2.png" )..{
-		InitCommand=function(self)
-		if GAMESTATE:GetCoinMode() == 'CoinMode_Home' then
-			self:visible(false);
-		else
-			self:visible(true);
-			self:Center();
-		end;
-		end;
-		OnCommand=cmd(blend,'BlendMode_Add';diffusealpha,1;glowshift;effectperiod,0.6);
-
-	};
 	-- DOUBLE PREMIUM
 	LoadActor("DOUBLE PREMIUM") .. {
 	--	InitCommand=cmd(zoom,1.1;y,SCREEN_CENTER_Y-205;diffuseshift;effectcolor1,1,1,1,1;effectcolor2,0.9,0.9,0.9,1;effectperiod,0.33);
