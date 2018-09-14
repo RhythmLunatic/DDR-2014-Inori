@@ -3,14 +3,14 @@ local t = Def.ActorFrame {};
 --CaloriesP1--
 --Title
 t[#t+1] = LoadFont("Common Normal")..{
-	InitCommand=cmd(player,PLAYER_1;zoom,0.7;draworder,6;y,SCREEN_CENTER_Y-177;horizalign,right;addx,-35);
+	InitCommand=cmd(player,PLAYER_1;zoom,0.7;draworder,6;y,-177;horizalign,right;addx,-35);
 	OnCommand=function(self)
 		self:settextf("Calories from this song:");
 	end;
 };
 --Numbers
 t[#t+1] = LoadFont("Common Normal")..{
-			InitCommand=cmd(player,PLAYER_1;zoom,0.7;draworder,6;y,SCREEN_CENTER_Y-177;horizalign,right;addx,35);
+			InitCommand=cmd(player,PLAYER_1;zoom,0.7;draworder,6;y,-177;horizalign,right;addx,35);
 			OnCommand=function(self)
 				local pssp1 = STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_1);
 				local CaloriesBurnedP1 = pssp1:GetCaloriesBurned();
@@ -19,7 +19,7 @@ t[#t+1] = LoadFont("Common Normal")..{
 		};
 --kcal
 t[#t+1] = LoadFont("Common Normal")..{
-	InitCommand=cmd(player,PLAYER_1;zoom,0.7;draworder,6;y,SCREEN_CENTER_Y-177;horizalign,left;addx,40);
+	InitCommand=cmd(player,PLAYER_1;zoom,0.7;draworder,6;y,-177;horizalign,left;addx,40);
 	OnCommand=function(self)
 		self:settextf("kcal");
 	end;
@@ -27,14 +27,14 @@ t[#t+1] = LoadFont("Common Normal")..{
 --Total CaloriesP1
 --Title
 t[#t+1] = LoadFont("Common Normal")..{
-	InitCommand=cmd(player,PLAYER_1;zoom,0.7;draworder,6;y,SCREEN_CENTER_Y-177+30;horizalign,right;addx,-35;diffuse,color("#000000"));
+	InitCommand=cmd(player,PLAYER_1;zoom,0.7;draworder,6;y,-177+30;horizalign,right;addx,-35;diffuse,color("#000000"));
 	OnCommand=function(self)
 		self:settextf("Calories today:");
 	end;
 };
 --Numbers
 t[#t+1] = LoadFont("Common Normal")..{
-			InitCommand=cmd(player,PLAYER_1;zoom,0.7;draworder,6;y,SCREEN_CENTER_Y-177+30;horizalign,right;addx,35;diffuse,color("#000000"));
+			InitCommand=cmd(player,PLAYER_1;zoom,0.7;draworder,6;y,-177+30;horizalign,right;addx,35;diffuse,color("#000000"));
 			OnCommand=function(self)
 					local CaloriesToday;
 					local pssp1 = STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_1);

@@ -17,323 +17,32 @@ t[#t+1] = LoadActor("LabelP2")..{
 --Sound
 t[#t+1] = LoadActor( THEME:GetPathS("ScreenOptions","change" ) ) .. {
 		CodeMessageCommand=function(self,params)
-		if params.Name=="OpenPanes1"then
+		if params.Name== "Left" or params.Name == "Right" then
 			self:play();
-		elseif params.Name=="OpenPanes2"then
-			self:play();
-		elseif params.Name=="OpenPanes3"then
-			self:play();
-		elseif params.Name=="OpenPanes4"then
-			self:play();
-		elseif params.Name=="ClosePanes"then
-			self:stop();
 		end;
 	end;
-};
---P1 Frames--
-t[#t+1] = LoadActor("DefaultFrame.png")..{
-	InitCommand=cmd(y,SCREEN_CENTER_Y+160-7;x,SCREEN_CENTER_X-330+80+5;visible,GAMESTATE:IsHumanPlayer(PLAYER_1);zoom,0.675);
-	OffCommand=cmd(sleep,0.2;linear,0.2;addx,-700);
-};
-t[#t+1] = LoadActor("judgment.png")..{
-	InitCommand=cmd(y,SCREEN_CENTER_Y+160-9-9;x,SCREEN_CENTER_X-245;visible,GAMESTATE:IsHumanPlayer(PLAYER_1);diffusealpha,0;zoom,0.675);
-	OffCommand=cmd(sleep,0.2;linear,0.2;addx,-700);
-	CodeMessageCommand=function(self,params)
-		local style = GAMESTATE:GetCurrentStyle():GetStyleType()
-		local pn= params.PlayerNumber
-		if pn==PLAYER_1 then
-			if params.Name=="OpenPanes1"then
-				self:diffusealpha(0);
-			elseif params.Name=="OpenPanes2"then
-				self:diffusealpha(1);
-			elseif params.Name=="OpenPanes3"then
-				self:diffusealpha(0);
-			elseif params.Name=="OpenPanes4"then
-				self:diffusealpha(0);
-			elseif params.Name=="ClosePanes"then
-				self:diffusealpha(0);
-			end;
-		end;
-	end;
-	};
-t[#t+1] = LoadActor("cal_back.png")..{
-	InitCommand=cmd(y,SCREEN_CENTER_Y+160-9-9;x,SCREEN_CENTER_X-330-40+30+80+20+5-10;visible,GAMESTATE:IsHumanPlayer(PLAYER_1);diffusealpha,0;zoom,0.675);
-	OffCommand=cmd(sleep,0.2;linear,0.2;addx,-700);
-	CodeMessageCommand=function(self,params)
-		local style = GAMESTATE:GetCurrentStyle():GetStyleType()
-		local pn= params.PlayerNumber
-		if pn==PLAYER_1 then
-			if params.Name=="OpenPanes1"then
-				self:diffusealpha(0);
-			elseif params.Name=="OpenPanes2"then
-				self:diffusealpha(0);
-			elseif params.Name=="OpenPanes3"then
-				self:diffusealpha(0);
-			elseif params.Name=="OpenPanes4"then
-				self:diffusealpha(1);
-			elseif params.Name=="ClosePanes"then
-				self:diffusealpha(0);
-			end;
-		end;
-	end;
-	};
-t[#t+1] = LoadActor("Instructions.png")..{
-	InitCommand=cmd(y,SCREEN_CENTER_Y+160-3-19;x,SCREEN_CENTER_X+330-80-5;visible,GAMESTATE:IsHumanPlayer(PLAYER_1);zoom,0.675);
-	OffCommand=cmd(sleep,0.2;linear,0.2;addx,700);
-	OnCommand=function(self)
-	local style = GAMESTATE:GetCurrentStyle():GetStyleType()
-	if style == "StyleType_TwoPlayersTwoSides" then
-	self:diffusealpha(0);
-	else
-	self:diffusealpha(1);
-	end;
-	end;
-	};
-t[#t+1] = LoadActor("CodeFrame 1x4.png")..{
-	InitCommand=cmd(y,SCREEN_CENTER_Y+160-3-19;x,SCREEN_CENTER_X-330-40+30+80+20+5;visible,GAMESTATE:IsHumanPlayer(PLAYER_1);animate,false;addx,-10;zoom,0.675);
-	OffCommand=cmd(sleep,0.2;linear,0.2;addx,-700);
-	CodeMessageCommand=function(self,params)
-		local style = GAMESTATE:GetCurrentStyle():GetStyleType()
-		local pn= params.PlayerNumber
-		if pn==PLAYER_1 then
-			if params.Name=="OpenPanes1"then
-				self:diffusealpha(1);
-				self:setstate(0);
-			elseif params.Name=="OpenPanes2"then
-				self:diffusealpha(1);
-				self:setstate(1);
-			elseif params.Name=="OpenPanes3"then
-				self:diffusealpha(1);
-				self:setstate(2);
-			elseif params.Name=="OpenPanes4"then
-				self:diffusealpha(1);
-				self:setstate(3);
-			elseif params.Name=="ClosePanes"then
-				self:diffusealpha(0);
-			end;
-		end;
-	end;
-	};
---P2 Frames--
-t[#t+1] = LoadActor("DefaultFrame.png")..{
-	InitCommand=cmd(y,SCREEN_CENTER_Y+160-7;x,SCREEN_CENTER_X+330-80-5;visible,GAMESTATE:IsHumanPlayer(PLAYER_2);zoom,0.675);
-	OffCommand=cmd(sleep,0.2;linear,0.2;addx,700);
 };
 
-t[#t+1] = LoadActor("judgment.png")..{
-	InitCommand=cmd(y,SCREEN_CENTER_Y+160-9-10;x,SCREEN_CENTER_X+245;visible,GAMESTATE:IsHumanPlayer(PLAYER_2);diffusealpha,0;zoom,0.675);
-	OffCommand=cmd(sleep,0.2;linear,0.2;addx,700);
-	CodeMessageCommand=function(self,params)
-		local style = GAMESTATE:GetCurrentStyle():GetStyleType()
-		local pn= params.PlayerNumber
-		if pn==PLAYER_2 then
-			if params.Name=="OpenPanes1"then
-				self:diffusealpha(0);
-			elseif params.Name=="OpenPanes2"then
-				self:diffusealpha(1);
-			elseif params.Name=="OpenPanes3"then
-				self:diffusealpha(0);
-			elseif params.Name=="OpenPanes4"then
-				self:diffusealpha(0);
-			elseif params.Name=="ClosePanes"then
-				self:diffusealpha(0);
-			end;
-		end;
-	end;
-	};
-t[#t+1] = LoadActor("cal_back.png")..{
-	InitCommand=cmd(y,SCREEN_CENTER_Y+160-9-10;x,SCREEN_CENTER_X+330-40+30-80+20-5-10;visible,GAMESTATE:IsHumanPlayer(PLAYER_2);diffusealpha,0;zoom,0.675);
-	OffCommand=cmd(sleep,0.2;linear,0.2;addx,700);
-	CodeMessageCommand=function(self,params)
-		local style = GAMESTATE:GetCurrentStyle():GetStyleType()
-		local pn= params.PlayerNumber
-		if pn==PLAYER_2 then
-			if params.Name=="OpenPanes1"then
-				self:diffusealpha(0);
-			elseif params.Name=="OpenPanes2"then
-				self:diffusealpha(0);
-			elseif params.Name=="OpenPanes3"then
-				self:diffusealpha(0);
-			elseif params.Name=="OpenPanes4"then
-				self:diffusealpha(1);
-			elseif params.Name=="ClosePanes"then
-				self:diffusealpha(0);
-			end;
-		end;
-	end;
-	};
+--P1 Frame--
+t[#t+1] = LoadActor("frame", GAMESTATE:GetMasterPlayerNumber())..{
+	InitCommand=cmd(xy,400,SCREEN_BOTTOM-205);
+};
+
 t[#t+1] = LoadActor("Instructions.png")..{
-	InitCommand=cmd(y,SCREEN_CENTER_Y+160-3-19;x,SCREEN_CENTER_X-330-40+30+80+20+5;visible,GAMESTATE:IsHumanPlayer(PLAYER_2);addx,-10;zoom,0.675);
-	OffCommand=cmd(sleep,0.2;linear,0.2;addx,-700);
-	OnCommand=function(self)
-	local style = GAMESTATE:GetCurrentStyle():GetStyleType()
-	if style == "StyleType_TwoPlayersTwoSides" then
-	self:diffusealpha(0);
-	else
-	self:diffusealpha(1);
-	end;
-	end;
-	};
-t[#t+1] = LoadActor("CodeFrame 1x4.png")..{
-	InitCommand=cmd(y,SCREEN_CENTER_Y+160-3-19;x,SCREEN_CENTER_X+330-80-5;visible,GAMESTATE:IsHumanPlayer(PLAYER_2);animate,false;zoom,0.675);
-	OffCommand=cmd(sleep,0.2;linear,0.2;addx,700);
-	CodeMessageCommand=function(self,params)
-		local style = GAMESTATE:GetCurrentStyle():GetStyleType()
-		local pn= params.PlayerNumber
-		if pn==PLAYER_2 then
-			if params.Name=="OpenPanes1"then
-				self:diffusealpha(1);
-				self:setstate(0);
-			elseif params.Name=="OpenPanes2"then
-				self:diffusealpha(1);
-				self:setstate(1);
-			elseif params.Name=="OpenPanes3"then
-				self:diffusealpha(1);
-				self:setstate(2);
-			elseif params.Name=="OpenPanes4"then
-				self:diffusealpha(1);
-				self:setstate(3);
-			elseif params.Name=="ClosePanes"then
+		InitCommand=cmd(y,SCREEN_CENTER_Y+160-3-19;x,SCREEN_CENTER_X+330-80-5;visible,GAMESTATE:IsHumanPlayer(PLAYER_1);zoom,0.675);
+		OffCommand=cmd(sleep,0.2;linear,0.2;addx,700);
+		OnCommand=function(self)
+			local style = GAMESTATE:GetCurrentStyle():GetStyleType()
+			if style == "StyleType_TwoPlayersTwoSides" then
 				self:diffusealpha(0);
+			else
+				self:diffusealpha(1);
 			end;
 		end;
-	end;
 	};
 t[#t+1] = LoadActor("grade")..{
 	InitCommand=cmd(diffusealpha,1;draworder,11;addy,-15-10-40-15);
 	OffCommand=cmd(sleep,0.2;linear,0.2;diffusealpha,0);
-};
-t[#t+1] = Def.ActorFrame{
-	InitCommand=cmd(diffusealpha,1;draworder,11;addx,110-20;addy,-30);
-	OffCommand=cmd(sleep,0.2;linear,0.2;diffusealpha,0);
-	CodeMessageCommand=function(self,params)
-		local style = GAMESTATE:GetCurrentStyle():GetStyleType()
-		local pn= params.PlayerNumber
-		if pn==PLAYER_1 then
-			if params.Name=="OpenPanes1"then
-				self:diffusealpha(1);
-			elseif params.Name=="OpenPanes2"then
-				self:diffusealpha(0);
-			elseif params.Name=="OpenPanes3"then
-				self:diffusealpha(0);
-			elseif params.Name=="OpenPanes4"then
-				self:diffusealpha(0);
-			elseif params.Name=="ClosePanes"then
-				self:diffusealpha(0);
-			end;
-		end;
-	end;
-	--FCTextP1--
-	LoadActor("NFC")..{
-		InitCommand=cmd(player,PLAYER_1;x,SCREEN_CENTER_X-355+140;y,SCREEN_CENTER_Y+180;zoom,0;diffusealpha,0);
-		OnCommand=function(self)
-		local pssp1 = STATSMAN:GetCurStageStats():GetPlayerStageStats("PlayerNumber_P1")
-			if pssp1:FullComboOfScore('TapNoteScore_W4') and
-			not pssp1:FullComboOfScore('TapNoteScore_W3') and
-			not pssp1:FullComboOfScore('TapNoteScore_W2') and
-			not pssp1:FullComboOfScore('TapNoteScore_W1')then
-				(cmd(sleep,0.316;linear,0.266;diffusealpha,1;zoom,1))(self);
-			end;
-		end;
-		OffCommand=cmd(linear,0.2;zoom,0);
-	};
-	LoadActor("GFC")..{
-		InitCommand=cmd(player,PLAYER_1;x,SCREEN_CENTER_X-355+140;y,SCREEN_CENTER_Y+180;zoom,0;diffusealpha,0);
-		OnCommand=function(self)
-		local staw = STATSMAN:GetCurStageStats():GetPlayerStageStats("PlayerNumber_P1"):GetStageAward();
-			if((staw =="StageAward_SingleDigitW3") or (staw =="StageAward_OneW3") or (staw =="StageAward_FullComboW3") ) then
-				(cmd(sleep,0.316;linear,0.266;diffusealpha,1;zoom,0.675))(self);
-			end;
-		end;
-		OffCommand=cmd(linear,0.2;zoom,0);
-	};
-	LoadActor("PFC")..{
-		InitCommand=cmd(player,PLAYER_1;x,SCREEN_CENTER_X-355+140;y,SCREEN_CENTER_Y+180;zoom,0;diffusealpha,0);
-		OnCommand=function(self)
-			local staw = STATSMAN:GetCurStageStats():GetPlayerStageStats("PlayerNumber_P1"):GetStageAward();
-			if((staw =="StageAward_SingleDigitW2") or (staw =="StageAward_OneW2") or (staw =="StageAward_FullComboW2") ) then
-				(cmd(sleep,0.316;linear,0.266;diffusealpha,1;zoom,0.675))(self);
-			end;
-		end;
-		OffCommand=cmd(linear,0.2;zoom,0);
-	};
-	LoadActor("MFC")..{
-		InitCommand=cmd(player,PLAYER_1;x,SCREEN_CENTER_X-355+140;y,SCREEN_CENTER_Y+180;zoom,0;diffusealpha,0);
-		OnCommand=function(self)
-			local staw = STATSMAN:GetCurStageStats():GetPlayerStageStats("PlayerNumber_P1"):GetStageAward();
-			if(staw =="StageAward_FullComboW1") then
-				(cmd(sleep,0.316;linear,0.266;diffusealpha,1;zoom,0.675))(self);
-			end;
-		end;
-		OffCommand=cmd(linear,0.2;zoom,0);
-
-	};
-};
-t[#t+1] = Def.ActorFrame{
-	InitCommand=cmd(diffusealpha,1;draworder,11;addx,-10-20;addy,-30);
-	OffCommand=cmd(sleep,0.2;linear,0.2;diffusealpha,0);
-	CodeMessageCommand=function(self,params)
-		local style = GAMESTATE:GetCurrentStyle():GetStyleType()
-		local pn= params.PlayerNumber
-		if pn==PLAYER_2 then
-			if params.Name=="OpenPanes1"then
-				self:diffusealpha(1);
-			elseif params.Name=="OpenPanes2"then
-				self:diffusealpha(0);
-			elseif params.Name=="OpenPanes3"then
-				self:diffusealpha(0);
-			elseif params.Name=="OpenPanes4"then
-				self:diffusealpha(0);
-			elseif params.Name=="ClosePanes"then
-				self:diffusealpha(0);
-			end;
-		end;
-	end;
-	--FCTextP2--
-	LoadActor("NFC")..{
-		InitCommand=cmd(player,PLAYER_1;x,SCREEN_CENTER_X+355+40;y,SCREEN_CENTER_Y+180;zoom,0;diffusealpha,0);
-		OnCommand=function(self)
-		local pssp2 = STATSMAN:GetCurStageStats():GetPlayerStageStats("PlayerNumber_P2")
-			if pssp2:FullComboOfScore('TapNoteScore_W4') and
-			not pssp2:FullComboOfScore('TapNoteScore_W3') and
-			not pssp2:FullComboOfScore('TapNoteScore_W2') and
-			not pssp2:FullComboOfScore('TapNoteScore_W1')then
-				(cmd(sleep,0.316;linear,0.266;diffusealpha,1;zoom,1))(self);
-			end;
-		end;
-		OffCommand=cmd(linear,0.2;zoom,0);
-	};
-	LoadActor("GFC")..{
-		InitCommand=cmd(player,PLAYER_1;x,SCREEN_CENTER_X+355+40;y,SCREEN_CENTER_Y+180;zoom,0;diffusealpha,0);
-		OnCommand=function(self)
-		local staw = STATSMAN:GetCurStageStats():GetPlayerStageStats("PlayerNumber_P2"):GetStageAward();
-			if((staw =="StageAward_SingleDigitW3") or (staw =="StageAward_OneW3") or (staw =="StageAward_FullComboW3") ) then
-				(cmd(sleep,0.316;linear,0.266;diffusealpha,1;zoom,0.675))(self);
-			end;
-		end;
-		OffCommand=cmd(linear,0.2;zoom,0);
-	};
-	LoadActor("PFC")..{
-		InitCommand=cmd(player,PLAYER_1;x,SCREEN_CENTER_X+355+40;y,SCREEN_CENTER_Y+180;zoom,0;diffusealpha,0);
-		OnCommand=function(self)
-			local staw = STATSMAN:GetCurStageStats():GetPlayerStageStats("PlayerNumber_P2"):GetStageAward();
-			if((staw =="StageAward_SingleDigitW2") or (staw =="StageAward_OneW2") or (staw =="StageAward_FullComboW2") ) then
-				(cmd(sleep,0.316;linear,0.266;diffusealpha,1;zoom,0.675))(self);
-			end;
-		end;
-		OffCommand=cmd(linear,0.2;zoom,0);
-	};
-	LoadActor("MFC")..{
-		InitCommand=cmd(player,PLAYER_1;x,SCREEN_CENTER_X+355+40;y,SCREEN_CENTER_Y+180;zoom,0;diffusealpha,0);
-		OnCommand=function(self)
-			local staw = STATSMAN:GetCurStageStats():GetPlayerStageStats("PlayerNumber_P2"):GetStageAward();
-			if(staw =="StageAward_FullComboW1") then
-				(cmd(sleep,0.316;linear,0.266;diffusealpha,1;zoom,0.675))(self);
-			end;
-		end;
-		OffCommand=cmd(linear,0.2;zoom,0);
-
-	};
 };
 --ScoreLabelP1
 t[#t+1] = LoadActor("Score_Label")..{
@@ -345,49 +54,6 @@ t[#t+1] = LoadActor("Score_Label")..{
 	InitCommand=cmd(diffusealpha,1;draworder,11;x,SCREEN_CENTER_X+320-80+7;y,SCREEN_CENTER_Y-90+5;visible,GAMESTATE:IsHumanPlayer(PLAYER_2);zoom,0.7);
 	OffCommand=cmd(sleep,0.2;linear,0.2;diffusealpha,0);
 };
---CaloriesP1
-t[#t+1] = LoadActor("caloriesP1")..{
-	InitCommand=cmd(visible,GAMESTATE:IsHumanPlayer(PLAYER_1);addy,185-3;zoom,1.25;x,SCREEN_CENTER_X-270+80+20+5;diffusealpha,0);
-	OffCommand=cmd(sleep,0.2;linear,0.2;addx,-700);
-	CodeMessageCommand=function(self,params)
-		local style = GAMESTATE:GetCurrentStyle():GetStyleType()
-		local pn= params.PlayerNumber
-		if pn==PLAYER_1 then
-			if params.Name=="OpenPanes1"then
-				self:diffusealpha(0);
-			elseif params.Name=="OpenPanes2"then
-				self:diffusealpha(0);
-			elseif params.Name=="OpenPanes3"then
-				self:diffusealpha(0);
-			elseif params.Name=="OpenPanes4"then
-				self:diffusealpha(1);
-			elseif params.Name=="ClosePanes"then
-				self:diffusealpha(0);
-			end;
-		end;
-	end;
-	};
-t[#t+1] = LoadActor("kcalP1")..{
-	InitCommand=cmd(visible,GAMESTATE:IsHumanPlayer(PLAYER_1);y,SCREEN_CENTER_Y+160-7;x,SCREEN_CENTER_X-330+80+5;diffusealpha,0;zoom,0.675);
-	OffCommand=cmd(sleep,0.2;linear,0.2;addx,-700);
-	CodeMessageCommand=function(self,params)
-		local style = GAMESTATE:GetCurrentStyle():GetStyleType()
-		local pn= params.PlayerNumber
-		if pn==PLAYER_1 then
-			if params.Name=="OpenPanes1"then
-				self:diffusealpha(0);
-			elseif params.Name=="OpenPanes2"then
-				self:diffusealpha(0);
-			elseif params.Name=="OpenPanes3"then
-				self:diffusealpha(0);
-			elseif params.Name=="OpenPanes4"then
-				self:diffusealpha(1);
-			elseif params.Name=="ClosePanes"then
-				self:diffusealpha(0);
-			end;
-		end;
-	end;
-	};
 --CaloriesP2
 t[#t+1] = LoadActor("caloriesP2")..{
 	InitCommand=cmd(visible,GAMESTATE:IsHumanPlayer(PLAYER_2);addy,185-3;zoom,1.25;x,SCREEN_CENTER_X+390-80+20-5;diffusealpha,0);
@@ -432,27 +98,7 @@ t[#t+1] = LoadActor("kcalP2")..{
 	end;
 	};
 --StatsP1--
-t[#t+1] = LoadActor("statsP1")..{
-	InitCommand=cmd(visible,GAMESTATE:IsHumanPlayer(PLAYER_1);addy,185-3-6;zoom,1.2575;x,SCREEN_CENTER_X-270+80+20+5;diffusealpha,0);
-	OffCommand=cmd(sleep,0.2;linear,0.2;addx,-700);
-	CodeMessageCommand=function(self,params)
-		local style = GAMESTATE:GetCurrentStyle():GetStyleType()
-		local pn= params.PlayerNumber
-		if pn==PLAYER_1 then
-			if params.Name=="OpenPanes1"then
-				self:diffusealpha(0);
-			elseif params.Name=="OpenPanes2"then
-				self:diffusealpha(1);
-			elseif params.Name=="OpenPanes3"then
-				self:diffusealpha(0);
-			elseif params.Name=="OpenPanes4"then
-				self:diffusealpha(0);
-			elseif params.Name=="ClosePanes"then
-				self:diffusealpha(0);
-			end;
-		end;
-	end;
-	};
+
 --StatsP2--
 t[#t+1] = LoadActor("statsP2")..{
 	InitCommand=cmd(visible,GAMESTATE:IsHumanPlayer(PLAYER_2);addy,185-3-6;zoom,1.2575;x,SCREEN_CENTER_X+390-80+20-5;diffusealpha,0);
@@ -475,78 +121,7 @@ t[#t+1] = LoadActor("statsP2")..{
 		end;
 	end;
 	};
---Stage Info P1
-t[#t+1] = Def.Sprite{
-	InitCommand=cmd(y,SCREEN_CENTER_Y+160-10-40;x,SCREEN_CENTER_X-330+80;visible,GAMESTATE:IsHumanPlayer(PLAYER_1);diffusealpha,1;zoom,0.675);
-	OnCommand=function(self)
-		if(STATSMAN:GetCurStageStats():GetPlayerStageStats("PlayerNumber_P1"):GetGrade()=="Grade_Failed") then
-			self:Load(THEME:GetPathB("ScreenEvaluation","decorations/Info_Failed.png"));
-		else
-			self:Load(THEME:GetPathB("ScreenEvaluation","decorations/Info_Clear.png"));
-		end;
-	end;
-	OffCommand=cmd(sleep,0.2;linear,0.2;addx,-700);
-	CodeMessageCommand=function(self,params)
-		local style = GAMESTATE:GetCurrentStyle():GetStyleType()
-		local pn= params.PlayerNumber
-		if pn==PLAYER_1 then
-			if params.Name=="OpenPanes1"then
-				self:diffusealpha(1);
-			elseif params.Name=="OpenPanes2"then
-				self:diffusealpha(0);
-			elseif params.Name=="OpenPanes3"then
-				self:diffusealpha(0);
-			elseif params.Name=="OpenPanes4"then
-				self:diffusealpha(0);
-			elseif params.Name=="ClosePanes"then
-				self:diffusealpha(0);
-			end;
-		end;
-	end;
-};
---Stage Info P2
-t[#t+1] = Def.Sprite{
-	InitCommand=cmd(y,SCREEN_CENTER_Y+160-10-40;x,SCREEN_CENTER_X+330-80-10;visible,GAMESTATE:IsHumanPlayer(PLAYER_2);diffusealpha,1;zoom,0.675);
-	OnCommand=function(self)
-		if(STATSMAN:GetCurStageStats():GetPlayerStageStats("PlayerNumber_P2"):GetGrade()=="Grade_Failed") then
-			self:Load(THEME:GetPathB("ScreenEvaluation","decorations/Info_Failed.png"));
-		else
-			self:Load(THEME:GetPathB("ScreenEvaluation","decorations/Info_Clear.png"));
-		end;
-	end;
-	OffCommand=cmd(sleep,0.2;linear,0.2;addx,700);
-	CodeMessageCommand=function(self,params)
-		local style = GAMESTATE:GetCurrentStyle():GetStyleType()
-		local pn= params.PlayerNumber
-		if pn==PLAYER_2 then
-			if params.Name=="OpenPanes1"then
-				self:diffusealpha(1);
-			elseif params.Name=="OpenPanes2"then
-				self:diffusealpha(0);
-			elseif params.Name=="OpenPanes3"then
-				self:diffusealpha(0);
-			elseif params.Name=="OpenPanes4"then
-				self:diffusealpha(0);
-			elseif params.Name=="ClosePanes"then
-				self:diffusealpha(0);
-			end;
-		end;
-	end;
-};
--- rival scores P1
-t[#t+1] = LoadActor("scoresP1")..{
-		InitCommand=cmd(diffusealpha,0;draworder,3);
-		CodeMessageCommand=function(self,params)
-		local pn = params.PlayerNumber
-		if pn==PLAYER_1 then
-			if params.Name=="OpenPanes3"then
-				self:diffusealpha(1);
-			else
-				self:diffusealpha(0);
-			end;
-		end;
-	end;
-};
+
 -- rival scores P2
 t[#t+1] = LoadActor("scoresP2")..{
 		InitCommand=cmd(diffusealpha,0;draworder,3);
