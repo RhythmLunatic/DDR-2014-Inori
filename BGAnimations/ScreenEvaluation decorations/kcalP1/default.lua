@@ -1,3 +1,4 @@
+local pn = ...;
 local t = Def.ActorFrame {};
 --food equivalent meter
 t[#t+1] = LoadActor("FE")..{
@@ -7,7 +8,7 @@ t[#t+1] = LoadActor("Fill")..{
 	InitCommand=cmd(addx,303;addy,166;vertalign,bottom);
 	OnCommand=function(self)
 	local CaloriesToday;
-	CaloriesToday = PROFILEMAN:GetProfile(PLAYER_1):GetCaloriesBurnedToday();
+	CaloriesToday = PROFILEMAN:GetProfile(pn):GetCaloriesBurnedToday();
 	if CaloriesToday >= 0 and CaloriesToday <= 5 then
 		local zoom = (CaloriesToday/5);
 		self:zoomy(zoom);
@@ -103,7 +104,7 @@ t[#t+1] = LoadFont("_itc avant garde std bk 50px")..{
 	InitCommand=cmd(horizalign,right;addx,220-4;addy,95;zoom,1.5;diffuse,color("#000000"));
 	OnCommand=function(self)
 	local CaloriesToday;
-	CaloriesToday = PROFILEMAN:GetProfile(PLAYER_1):GetCaloriesBurnedToday();
+	CaloriesToday = PROFILEMAN:GetProfile(pn):GetCaloriesBurnedToday();
 	if CaloriesToday >= 0 and CaloriesToday <= 5 then
 		local percent = ((CaloriesToday/5)*100);
 		self:settextf("%0.0f",percent)	
@@ -202,7 +203,7 @@ t[#t+1] = Def.Sprite{
 		InitCommand=cmd(zoom,1);
 		OnCommand=function(self)
 		local CaloriesToday;
-		CaloriesToday = PROFILEMAN:GetProfile(PLAYER_1):GetCaloriesBurnedToday();
+		CaloriesToday = PROFILEMAN:GetProfile(pn):GetCaloriesBurnedToday();
 		if CaloriesToday >= 0 and CaloriesToday <= 5 then
 			self:Load(THEME:GetPathB("ScreenEvaluation", "decorations/kcalP1/005.png"));
 		elseif CaloriesToday >= 5.01 and CaloriesToday <= 30 then

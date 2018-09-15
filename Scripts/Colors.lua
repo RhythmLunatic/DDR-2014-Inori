@@ -3,39 +3,6 @@ ColorGR = {
 	PLAYER_1 = color("0,0.9,1,0.5"),
 	PLAYER_2 = color("1,0,0.9,0.5"),
 }
--- O
--- Original Color Module.
-Color = {
--- Color Library
--- These colors are pure swatch colors and are here purely to be used
--- on demand without having to type color("stuff") or dig through
--- a palette to get the color you want.
-	Black		=	color("0,0,0,1"),
-	White		=	color("1,1,1,1"),
-	Red		=	color("#ed1c24"),
-	Blue		=	color("0,0,1,1"),
-	Green		=	color("#12ff00"),
-	Yellow		=	color("#fff200"),
-	Orange		=	color("#f7941d"),
-	Purple		=	color("#92278f"),
-	Pink		=	color("#ff43e7"),
-	Outline		=	color("0,0,0,1"),
-	Invisible	=	color("1,1,1,0"),
-	Stealth		=	color("0,0,0,0"),
--- Color Functions
--- These functions alter colors in a certain way so that you can make
--- new ones without having to copy a color or find a new one.
---[[     Brightness(fInput)
-    Hue(hInput)
-    Saturation(hInput)
-    Alpha(hInput)
-    HSV(iHue,fSaturation,fValue or any other overload) --]]
-	Alpha = function(c, fAlpha)
-		return { c[1],c[2],c[3], fAlpha }
-	end
-}
-
-setmetatable(Color, { __call = function(self, c) return self[c] end })
 
 -- Remapped Color Module, since some themes are crazy
 -- Colors = Color;

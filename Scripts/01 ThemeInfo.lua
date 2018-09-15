@@ -1,8 +1,8 @@
 -- theme identification:
 themeInfo = {
-ProductCode = "DDR X3 vs. 2ndMIX",
-Name = "DDR X3",
-Version = "r0",
-Date = "20170102",
-Author = "MidflightDigital"
+ProductCode = "DDR 2014 Plus",
+Name = "DDR 2014",
+Version = "Beta",
+Date = "20180915",
+Author = "Midflight Digital, Improved By Rhythm Lunatic"
 }
