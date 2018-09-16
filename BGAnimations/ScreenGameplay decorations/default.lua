@@ -16,7 +16,7 @@ local tns_reverse = Enum.Reverse(TapNoteScore)
 t[#t+1] = Def.Actor{
     Name="ScoringController",
     JudgmentMessageCommand = function(_,params)
-		SN2Scoring.PrepareScoringInfo(IsStarterMode())
+		SN2Scoring.PrepareScoringInfo(false)
         if not ScoringPlayers[params.Player] then
             ScoringPlayers[params.Player] = true
         end
@@ -63,31 +63,6 @@ local xPosPlayer = {
     P1 = (THEME:GetMetric(Var "LoadingScreen","PlayerP1OnePlayerOneSideX")),
     P2 = (THEME:GetMetric(Var "LoadingScreen","PlayerP2OnePlayerOneSideX"))
 }
-
-if Is2ndMIX() then
-  for _, pn in pairs(GAMESTATE:GetEnabledPlayers()) do
-    t[#t+1] = Def.RollingNumbers {
-      Font="2ndMIXScore";
-      InitCommand=function(self)
-        local short = ToEnumShortString(pn)
-        self:y(SCREEN_BOTTOM-40);
-        self:x(xPosPlayer[short]):Load("RollingNumbers2ndGameplay")
-        self:draworder(200)
-      end;
-      JudgmentMessageCommand=function(s)
-        local info = SecondInfo[pn]
-        if not info then
-        	info = OldScoring.MakeScoringFunctions()
-        	SecondInfo[pn] = info
-        end
-        local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(pn)
-        info.Update(pss)
-        local score = info.GetCurrentScore()
-        s:targetnumber(score);
-      end,
-    };
-  end;
-end;
 
 --options--
 if not getenv("OLDMIX") then

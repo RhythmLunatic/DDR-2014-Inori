@@ -56,10 +56,6 @@ end;
 			end;
 		end;
 	};]]
-t[#t+1] = LoadActor("grade")..{
-	InitCommand=cmd(diffusealpha,1;draworder,11;addy,-15-10-40-15);
-	OffCommand=cmd(sleep,0.2;linear,0.2;diffusealpha,0);
-};
 --ScoreLabelP1
 t[#t+1] = LoadActor("Score_Label")..{
 	InitCommand=cmd(diffusealpha,1;draworder,11;x,SCREEN_CENTER_X-320-100-10;y,SCREEN_CENTER_Y-90+5;visible,GAMESTATE:IsHumanPlayer(PLAYER_1);zoom,0.7);
@@ -114,11 +110,16 @@ t[#t+1] = Def.ActorFrame {
 --I don't even know what this is
 t[#t+1] = StandardDecorationFromFileOptional("StageDisplay","StageDisplay");
 
---Score
 for pn in ivalues(GAMESTATE:GetEnabledPlayers()) do
-	--Ternary
+	--Grade
+	--Positioning handled by metrics.
+	t[#t+1] = LoadActor("grade", pn)..{
+		InitCommand=cmd(diffusealpha,1;draworder,11);
+		OffCommand=cmd(sleep,0.2;linear,0.2;diffusealpha,0);
+	};
+	--Score
 	--TODO: Fix this, because what the fuck is this positioning? It's not even aligned
-	local xVal = (pn == PLAYER_1) and SCREEN_CENTER_X-310+23 or SCREEN_CENTER_X+310+75;
+	local xVal = (pn == PLAYER_1) and SCREEN_CENTER_X-310+23 or SCREEN_CENTER_X+310+75; --Ternary
 	t[#t+1] = Def.RollingNumbers {
 		File = THEME:GetPathF("ScreenEvaluation", "ScoreNumbers");
 		InitCommand=cmd(DiffuseAndStroke,Color("Black"),Color("HoloBlue");x,xVal;y,SCREEN_CENTER_Y-47.5;player,pn;playcommand,"Set");

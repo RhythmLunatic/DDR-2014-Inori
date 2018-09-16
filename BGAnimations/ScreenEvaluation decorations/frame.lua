@@ -21,7 +21,9 @@ local paneColors = { color("#988B89"), color("#00A3DA"), color("#00DE14"), color
 
 local tabsToLoad = showInstructionsTab and "tabsExtended 1x5" or "tabsNormal 1x4";
 
-local soundeffect;
+--If PLAYER_1, zoom the frame to the left -700, else zoom it to the right 700.
+local zoomTowards = (controller == PLAYER_1) and -700 or 700;
+--local soundeffect;
 local t = Def.ActorFrame{
 	--Input handler
 	CodeMessageCommand=function(self,params)
@@ -55,12 +57,12 @@ local t = Def.ActorFrame{
 	Def.Quad{
 		Name="DefaultFrame";
 		InitCommand=cmd(setsize,FRAME_WIDTH,FRAME_HEIGHT;diffuse,color("1.0,1.0,1.0,0.65"););
-		OffCommand=cmd(sleep,0.2;linear,0.2;addx,-700);
+		OffCommand=cmd(sleep,0.2;linear,0.2;addx,zoomTowards);
 	};
 	--Tabs
 	LoadActor(tabsToLoad)..{
 		InitCommand=cmd(vertalign,bottom;horizalign,left;xy,-FRAME_WIDTH/2,-FRAME_HEIGHT/2-5;animate,false;zoom,0.675;setstate,paneState);
-		OffCommand=cmd(sleep,0.2;linear,0.2;addx,-700);
+		OffCommand=cmd(sleep,0.2;linear,0.2;addx,zoomTowards);
 		CodeMessageCommand=function(self,params)
 			if params.PlayerNumber==controller then
 				self:setstate(paneState);
@@ -70,6 +72,7 @@ local t = Def.ActorFrame{
 	--Pane border
 	Def.ActorFrame{
 		InitCommand=cmd(diffuse,paneColors[paneState+1]);
+		OffCommand=cmd(sleep,0.2;linear,0.2;addx,zoomTowards);
 		CodeMessageCommand=function(self,params)
 			if params.PlayerNumber==controller then
 				self:diffuse(paneColors[paneState+1]);
@@ -118,15 +121,25 @@ local t = Def.ActorFrame{
 			--FCTextP1--
 			LoadActor("NFC")..{
 				InitCommand=cmd(zoom,0;diffusealpha,0;addy,40;addx,100;);
-				OnCommand=cmd(sleep,0.316;linear,0.266;diffusealpha,1;zoom,1);
+				OnCommand=function(self)
+					local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(pn)
+					if stats:FullCombo() then
+						--do nothing
+					elseif stats:GetGrade()=="Grade_Failed" then
+						--do nothing
+					else
+						(cmd(sleep,0.316;linear,0.266;diffusealpha,1;zoom,1))(self)
+						self:queuecommand("Animate");
+					end;
 				--[[local pssp1 = STATSMAN:GetCurStageStats():GetPlayerStageStats(pn)
 					if pssp1:FullComboOfScore('TapNoteScore_W4') and
 					not pssp1:FullComboOfScore('TapNoteScore_W3') and
 					not pssp1:FullComboOfScore('TapNoteScore_W2') and
 					not pssp1:FullComboOfScore('TapNoteScore_W1')then
 						(cmd(sleep,0.316;linear,0.266;diffusealpha,1;zoom,1))(self);
-					end;
-				end;]]
+					end;]]
+				end;
+				AnimateCommand=cmd(linear,.1;zoom,1.1;glow,color("1,1,1,.3");linear,.1;zoom,1.0;glow,color("1,1,1,0");sleep,.5;queuecommand,"Animate");
 				OffCommand=cmd(linear,0.2;zoom,0);
 			};
 			LoadActor("GFC")..{
@@ -165,6 +178,7 @@ local t = Def.ActorFrame{
 	--2nd pane, Judgement image
 	Def.ActorFrame{
 		InitCommand=cmd(diffusealpha,0;addy,-15);
+		OffCommand=cmd(sleep,0.2;linear,0.2;addx,-700);
 		CodeMessageCommand=function(self,params)
 			if params.PlayerNumber==controller then
 				if paneState == 1 then
@@ -177,11 +191,9 @@ local t = Def.ActorFrame{
 			
 		LoadActor("judgment.png")..{
 			InitCommand=cmd(zoom,0.675;addx,-1);
-			OffCommand=cmd(sleep,0.2;linear,0.2;addx,-700);
 		};
 		LoadActor("statsUnified", pn)..{
 			InitCommand=cmd(xy,75,-325;zoom,1.2575;);
-			OffCommand=cmd(sleep,0.2;linear,0.2;addx,-700);
 		};
 	};
 	--3rd pane, rankings

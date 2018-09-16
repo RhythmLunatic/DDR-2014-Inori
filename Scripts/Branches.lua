@@ -90,8 +90,6 @@ Branch.AfterGameplay = function()
 			end
 		elseif GAMESTATE:GetPlayMode() == 'PlayMode_Rave' then
 			return "ScreenEvaluationRave"
-		elseif Is2ndMIX() then
-			return "Screen2ndMIXEvaluation"
 		else
 			return "ScreenEvaluationNormal"
 		end

@@ -1,331 +1,84 @@
-local t = Def.ActorFrame {
---P1--
---FCRingP1--
-	LoadActor("GoodFullcombo_ring")..{
-		InitCommand=cmd(player,PLAYER_1;x,SCREEN_CENTER_X-400+45+20-5;y,SCREEN_CENTER_Y-120-10;zoom,0);
+--Stolen from https://github.com/Inorizushi/DDR-X3/tree/master/BGAnimations/ScreenEvaluation%20decorations/grade
+
+local pn = ...
+-- the only arg is arg 1, the player number
+local function m(metric)
+	metric = metric:gsub("PN", ToEnumShortString(pn))
+	return THEME:GetMetric(Var "LoadingScreen",metric)
+end
+
+local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(pn)
+
+--local tier = SN2Grading.ScoreToGrade(pss:GetScore(), pss:GetPlayedSteps()[1]:GetDifficulty())
+local tier = pss:GetGrade();
+
+local t = Def.ActorFrame {};
+
+t[#t+1] = Def.ActorFrame{
+	Def.Sprite{
+		InitCommand = function(s) s:draworder(98):player(pn):x(m "RingPNX"):y(m "RingPNY"):zoom(0) end,
 		OnCommand=function(self)
-		local pssp1 = STATSMAN:GetCurStageStats():GetPlayerStageStats("PlayerNumber_P1")
-			if pssp1:FullComboOfScore('TapNoteScore_W4') then
-				(cmd(linear,0.2;zoom,0.65;spin;effectmagnitude,0,0,170))(self);
+			local staw = STATSMAN:GetCurStageStats():GetPlayerStageStats(pn):GetStageAward();
+			if staw ~= nil then
+				if((staw =="StageAward_SingleDigitW3") or (staw =="StageAward_OneW3") or (staw =="StageAward_FullComboW3") or string.find(staw,"W3")) then
+					self:Load(THEME:GetPathB("","ScreenEvaluation decorations/grade/Fullcombo_ring.png"));
+				elseif((staw =="StageAward_SingleDigitW2") or (staw =="StageAward_OneW2") or (staw =="StageAward_FullComboW2") ) then
+					self:Load(THEME:GetPathB("","ScreenEvaluation decorations/grade/PerfectFullcombo_ring.png"));
+				elseif (staw =="StageAward_FullComboW1") then
+					self:Load(THEME:GetPathB("","ScreenEvaluation decorations/grade/MarvelousFullcombo_ring.png"));
+				end;
+				(cmd(linear,0.2;zoom,1;spin;effectmagnitude,0,0,170))(self);
 			end;
 		end;
 		OffCommand=cmd(linear,0.2;zoom,0);
 	};
-	LoadActor("Fullcombo_ring")..{
-		InitCommand=cmd(player,PLAYER_1;x,SCREEN_CENTER_X-400+45+20-5;y,SCREEN_CENTER_Y-120-10;zoom,0);
+	--Lines
+	Def.Sprite{
+		InitCommand = function(s) s:draworder(98):player(pn):x(m "RingPNX"):y(m "RingPNY"):zoom(0) end,
 		OnCommand=function(self)
-		local staw = STATSMAN:GetCurStageStats():GetPlayerStageStats("PlayerNumber_P1"):GetStageAward();
-			if((staw =="StageAward_SingleDigitW3") or (staw =="StageAward_OneW3") or (staw =="StageAward_FullComboW3") ) then
-				(cmd(linear,0.2;zoom,0.65;spin;effectmagnitude,0,0,170))(self);
-			end;
-		end;
-		OffCommand=cmd(linear,0.2;zoom,0);
-	};
-	LoadActor("PerfectFullcombo_ring")..{
-		InitCommand=cmd(player,PLAYER_1;x,SCREEN_CENTER_X-400+45+20-5;y,SCREEN_CENTER_Y-120-10;zoom,0);
-		OnCommand=function(self)
-			local staw = STATSMAN:GetCurStageStats():GetPlayerStageStats("PlayerNumber_P1"):GetStageAward();
-			if((staw =="StageAward_SingleDigitW2") or (staw =="StageAward_OneW2") or (staw =="StageAward_FullComboW2") ) then
-				(cmd(linear,0.2;zoom,0.65;spin;effectmagnitude,0,0,170))(self);
-			end;
-		end;
-		OffCommand=cmd(linear,0.2;zoom,0);
-	};
-	LoadActor("MarvelousFullcombo_ring")..{
-		InitCommand=cmd(player,PLAYER_1;x,SCREEN_CENTER_X-400+45+20-5;y,SCREEN_CENTER_Y-120-10;zoom,0);
-		OnCommand=function(self)
-			local staw = STATSMAN:GetCurStageStats():GetPlayerStageStats("PlayerNumber_P1"):GetStageAward();
-			if(staw =="StageAward_FullComboW1") then
-				(cmd(linear,0.2;zoom,0.65;spin;effectmagnitude,0,0,170))(self);
-			end;
-		end;
-		OffCommand=cmd(linear,0.2;zoom,0);
-	};
-	LoadActor("GoodFullcombo_lines")..{
-		InitCommand=cmd(player,PLAYER_1;x,SCREEN_CENTER_X-400+45+20-5;y,SCREEN_CENTER_Y-120-10;zoom,0);
-		OnCommand=function(self)
-		local pssp1 = STATSMAN:GetCurStageStats():GetPlayerStageStats("PlayerNumber_P1")
-			if pssp1:FullComboOfScore('TapNoteScore_W4') then
+		local staw = STATSMAN:GetCurStageStats():GetPlayerStageStats(pn):GetStageAward();
+			if staw ~= nil then
+				if((staw =="StageAward_SingleDigitW3") or (staw =="StageAward_OneW3") or (staw =="StageAward_FullComboW3") or string.find(staw,"W3")) then
+					self:Load(THEME:GetPathB("","ScreenEvaluation decorations/grade/Fullcombo_lines.png"));
+				elseif((staw =="StageAward_SingleDigitW2") or (staw =="StageAward_OneW2") or (staw =="StageAward_FullComboW2") ) then
+					self:Load(THEME:GetPathB("","ScreenEvaluation decorations/grade/PerfectFullcombo_lines.png"));
+				elseif (staw =="StageAward_FullComboW1") then
+					self:Load(THEME:GetPathB("","ScreenEvaluation decorations/grade/MarvelousFullcombo_lines.png"));
+				end;
 				(cmd(linear,0.2;zoom,1;spin;effectmagnitude,0,0,-170))(self);
 			end;
 		end;
 		OffCommand=cmd(linear,0.2;zoom,0);
 	};
-	LoadActor("Fullcombo_lines")..{
-		InitCommand=cmd(player,PLAYER_1;x,SCREEN_CENTER_X-400+45+20-5;y,SCREEN_CENTER_Y-120-10;zoom,0);
-		OnCommand=function(self)
-		local staw = STATSMAN:GetCurStageStats():GetPlayerStageStats("PlayerNumber_P1"):GetStageAward();
-			if((staw =="StageAward_SingleDigitW3") or (staw =="StageAward_OneW3") or (staw =="StageAward_FullComboW3") ) then
-				(cmd(linear,0.2;zoom,1;spin;effectmagnitude,0,0,-170))(self);
-			end;
-		end;
-		OffCommand=cmd(linear,0.2;zoom,0);
-	};
-	
-	LoadActor("PerfectFullcombo_lines")..{
-		InitCommand=cmd(player,PLAYER_1;x,SCREEN_CENTER_X-400+45+20-5;y,SCREEN_CENTER_Y-120-10;zoom,0);
-		OnCommand=function(self)
-			local staw = STATSMAN:GetCurStageStats():GetPlayerStageStats("PlayerNumber_P1"):GetStageAward();
-			if((staw =="StageAward_SingleDigitW2") or (staw =="StageAward_OneW2") or (staw =="StageAward_FullComboW2") ) then
-				(cmd(linear,0.2;zoom,1;spin;effectmagnitude,0,0,-170))(self);
-			end;
-		end;
-		OffCommand=cmd(linear,0.2;zoom,0);
-	};
-	LoadActor("MarvelousFullcombo_lines")..{
-		InitCommand=cmd(player,PLAYER_1;x,SCREEN_CENTER_X-400+45+20-5;y,SCREEN_CENTER_Y-120-10;zoom,0);
-		OnCommand=function(self)
-			local staw = STATSMAN:GetCurStageStats():GetPlayerStageStats("PlayerNumber_P1"):GetStageAward();
-			if(staw =="StageAward_FullComboW1") then
-				(cmd(linear,0.2;zoom,1;spin;effectmagnitude,0,0,-170))(self);
-			end;
-		end;
-		OffCommand=cmd(linear,0.2;zoom,0);
-	};
+} ;
 
---GRADEP1---
-
-	LoadActor("Grade_3A.png")..{
-		InitCommand=cmd(player,PLAYER_1;x,SCREEN_CENTER_X-400+20-5;y,SCREEN_CENTER_Y-90;zoom,0);
-		OnCommand=function(self)
-			if(STATSMAN:GetCurStageStats():GetPlayerStageStats("PlayerNumber_P1"):GetGrade()=="Grade_Tier01") then
-				(cmd(sleep,0.2;linear,0.2;zoom,0.675))(self);
-			end;
-		end;
-		OffCommand=cmd(linear,0.2;zoom,0);
+t[#t+1] = Def.ActorFrame{
+	Def.Sprite{
+		Texture = THEME:GetPathB("ScreenEvaluation decorations/grade/GradeDisplayEval", ToEnumShortString(tier)),
+		InitCommand = function(s) s:x(m "GradePNX"):y(m "GradePNY") end,
+		OnCommand = m "GradePNOnCommand",
+		OffCommand = m "GradePNOffCommand"
 	};
-	
-	LoadActor("Grade_2A.png")..{
-		InitCommand=cmd(player,PLAYER_1;x,SCREEN_CENTER_X-400+20-5;y,SCREEN_CENTER_Y-90;zoom,0);
-		OnCommand=function(self)
-			if(STATSMAN:GetCurStageStats():GetPlayerStageStats("PlayerNumber_P1"):GetGrade()=="Grade_Tier02") then
-				(cmd(sleep,0.2;linear,0.2;zoom,0.675))(self);
-			end;
-		end;
-		OffCommand=cmd(linear,0.2;zoom,0);
-	};
-	LoadActor("Grade_A.png")..{
-		InitCommand=cmd(player,PLAYER_1;x,SCREEN_CENTER_X-400+20-5;y,SCREEN_CENTER_Y-90;zoom,0);
-		OnCommand=function(self)
-			if(STATSMAN:GetCurStageStats():GetPlayerStageStats("PlayerNumber_P1"):GetGrade()=="Grade_Tier03") then
-				(cmd(sleep,0.2;linear,0.2;zoom,0.675))(self);
-			end;
-		end;
-		OffCommand=cmd(linear,0.2;zoom,0);
-	};
-	LoadActor("Grade_B.png")..{
-		InitCommand=cmd(player,PLAYER_1;x,SCREEN_CENTER_X-400+20-5;y,SCREEN_CENTER_Y-90;zoom,0);
-		OnCommand=function(self)
-			if(STATSMAN:GetCurStageStats():GetPlayerStageStats("PlayerNumber_P1"):GetGrade()=="Grade_Tier04") then
-				(cmd(sleep,0.2;linear,0.2;zoom,0.675))(self);
-			end;
-		end;
-		OffCommand=cmd(linear,0.2;zoom,0);
-	};
-	
-	LoadActor("Grade_C.png")..{
-		InitCommand=cmd(player,PLAYER_1;x,SCREEN_CENTER_X-400+20-5;y,SCREEN_CENTER_Y-90;zoom,0);
-		OnCommand=function(self)
-			if(STATSMAN:GetCurStageStats():GetPlayerStageStats("PlayerNumber_P1"):GetGrade()=="Grade_Tier05") then
-				(cmd(sleep,0.2;linear,0.2;zoom,0.675))(self);
-			end;
-		end;
-		OffCommand=cmd(linear,0.2;zoom,0);
-	};
-	LoadActor("Grade_D.png")..{
-		InitCommand=cmd(player,PLAYER_1;x,SCREEN_CENTER_X-400+20-5;y,SCREEN_CENTER_Y-90;zoom,0);
-		OnCommand=function(self)
-			if(STATSMAN:GetCurStageStats():GetPlayerStageStats("PlayerNumber_P1"):GetGrade()=="Grade_Tier06") then
-				(cmd(sleep,0.2;linear,0.2;zoom,0.675))(self);
-			end;
-		end;
-		OffCommand=cmd(linear,0.2;zoom,0);
-	};
-
-	LoadActor("Grade_E.png")..{
-		InitCommand=cmd(player,PLAYER_1;x,SCREEN_CENTER_X-400+20-5;y,SCREEN_CENTER_Y-90;zoom,0);
-		OnCommand=function(self)
-			if(STATSMAN:GetCurStageStats():GetPlayerStageStats("PlayerNumber_P1"):GetGrade()=="Grade_Tier07") then
-				(cmd(sleep,0.2;linear,0.2;zoom,0.675))(self);
-			end;
-		end;
-		OffCommand=cmd(linear,0.2;zoom,0);
-	};
-	
-	LoadActor("Grade_E.png")..{
-		InitCommand=cmd(player,PLAYER_1;x,SCREEN_CENTER_X-400+20-5;y,SCREEN_CENTER_Y-90;zoom,0);
-		OnCommand=function(self)
-			if(STATSMAN:GetCurStageStats():GetPlayerStageStats("PlayerNumber_P1"):GetGrade()=="Grade_Failed") then
-				(cmd(sleep,0.2;linear,0.2;zoom,0.675))(self);
-			end;
-		end;
-		OffCommand=cmd(linear,0.2;zoom,0);
-	};
-
-
---P2--
---FCRingP2--
-	LoadActor("GoodFullcombo_ring")..{
-		InitCommand=cmd(player,PLAYER_2;x,SCREEN_CENTER_X+400-90-10-10+45;y,SCREEN_CENTER_Y-120-10;zoom,0);
-		OnCommand=function(self)
-		local pssp2 = STATSMAN:GetCurStageStats():GetPlayerStageStats("PlayerNumber_P2")
-			if pssp2:FullComboOfScore('TapNoteScore_W4') then
-				(cmd(linear,0.2;zoom,0.65;spin;effectmagnitude,0,0,170))(self);
-			end;
-		end;
-		OffCommand=cmd(linear,0.2;zoom,0);
-	};
-		LoadActor("Fullcombo_ring")..{
-		InitCommand=cmd(player,PLAYER_2;x,SCREEN_CENTER_X+400-90-10-10+45;y,SCREEN_CENTER_Y-120-10;zoom,0);
-		OnCommand=function(self)
-		local staw = STATSMAN:GetCurStageStats():GetPlayerStageStats("PlayerNumber_P2"):GetStageAward();
-			if((staw =="StageAward_SingleDigitW3") or (staw =="StageAward_OneW3") or (staw =="StageAward_FullComboW3") ) then
-				(cmd(linear,0.2;zoom,0.65;spin;effectmagnitude,0,0,170))(self);
-			end;
-		end;
-		OffCommand=cmd(linear,0.2;zoom,0);
-	};
-	LoadActor("PerfectFullcombo_ring")..{
-		InitCommand=cmd(player,PLAYER_2;x,SCREEN_CENTER_X+400-90-10-10+45;y,SCREEN_CENTER_Y-120-10;zoom,0);
-		OnCommand=function(self)
-			local staw = STATSMAN:GetCurStageStats():GetPlayerStageStats("PlayerNumber_P2"):GetStageAward();
-			if((staw =="StageAward_SingleDigitW2") or (staw =="StageAward_OneW2") or (staw =="StageAward_FullComboW2") ) then
-				(cmd(linear,0.2;zoom,0.65;spin;effectmagnitude,0,0,170))(self);
-			end;
-		end;
-		OffCommand=cmd(linear,0.2;zoom,0);
-	};
-	LoadActor("MarvelousFullcombo_ring")..{
-		InitCommand=cmd(player,PLAYER_2;x,SCREEN_CENTER_X+400-90-10-10+45;y,SCREEN_CENTER_Y-120-10;zoom,0);
-		OnCommand=function(self)
-			local staw = STATSMAN:GetCurStageStats():GetPlayerStageStats("PlayerNumber_P2"):GetStageAward();
-			if(staw =="StageAward_FullComboW1") then
-				(cmd(linear,0.2;zoom,0.65;spin;effectmagnitude,0,0,170))(self);
-			end;
-		end;
-		OffCommand=cmd(linear,0.2;zoom,0);
-	};
-	LoadActor("GoodFullcombo_lines")..{
-		InitCommand=cmd(player,PLAYER_2;x,SCREEN_CENTER_X+400-90-10-10+45;y,SCREEN_CENTER_Y-120-10;zoom,0);
-		OnCommand=function(self)
-		local pssp1 = STATSMAN:GetCurStageStats():GetPlayerStageStats("PlayerNumber_P2")
-			if pssp1:FullComboOfScore('TapNoteScore_W4') then
-				(cmd(linear,0.2;zoom,1;spin;effectmagnitude,0,0,-170))(self);
-			end;
-		end;
-		OffCommand=cmd(linear,0.2;zoom,0);
-	};
-	LoadActor("Fullcombo_lines")..{
-		InitCommand=cmd(player,PLAYER_2;x,SCREEN_CENTER_X+400-90-10-10+45;y,SCREEN_CENTER_Y-120-10;zoom,0);
-		OnCommand=function(self)
-		local staw = STATSMAN:GetCurStageStats():GetPlayerStageStats("PlayerNumber_P2"):GetStageAward();
-			if((staw =="StageAward_SingleDigitW3") or (staw =="StageAward_OneW3") or (staw =="StageAward_FullComboW3") ) then
-				(cmd(linear,0.2;zoom,1;spin;effectmagnitude,0,0,-170))(self);
-			end;
-		end;
-		OffCommand=cmd(linear,0.2;zoom,0);
-	};
-	
-	LoadActor("PerfectFullcombo_lines")..{
-		InitCommand=cmd(player,PLAYER_2;x,SCREEN_CENTER_X+400-90-10-10+45;y,SCREEN_CENTER_Y-120-10;zoom,0);
-		OnCommand=function(self)
-			local staw = STATSMAN:GetCurStageStats():GetPlayerStageStats("PlayerNumber_P2"):GetStageAward();
-			if((staw =="StageAward_SingleDigitW2") or (staw =="StageAward_OneW2") or (staw =="StageAward_FullComboW2") ) then
-				(cmd(linear,0.2;zoom,1;spin;effectmagnitude,0,0,-170))(self);
-			end;
-		end;
-		OffCommand=cmd(linear,0.2;zoom,0);
-	};
-	LoadActor("MarvelousFullcombo_lines")..{
-		InitCommand=cmd(player,PLAYER_2;x,SCREEN_CENTER_X+400-90-10-10+45;y,SCREEN_CENTER_Y-120-10;zoom,0);
-		OnCommand=function(self)
-			local staw = STATSMAN:GetCurStageStats():GetPlayerStageStats("PlayerNumber_P2"):GetStageAward();
-			if(staw =="StageAward_FullComboW1") then
-				(cmd(linear,0.2;zoom,1;spin;effectmagnitude,0,0,-170))(self);
-			end;
-		end;
-		OffCommand=cmd(linear,0.2;zoom,0);
-	};
-
-
---GradeP2--
-
-	LoadActor("Grade_3A.png")..{
-		InitCommand=cmd(player,PLAYER_2;x,SCREEN_CENTER_X+400-90-10-10;y,SCREEN_CENTER_Y-90;zoom,0);
-		OnCommand=function(self)
-			if(STATSMAN:GetCurStageStats():GetPlayerStageStats("PlayerNumber_P2"):GetGrade()=="Grade_Tier01") then
-				(cmd(sleep,0.2;linear,0.2;zoom,0.675))(self);
-			end;
-		end;
-		OffCommand=cmd(linear,0.2;zoom,0);
-	};
-	
-	LoadActor("Grade_2A.png")..{
-		InitCommand=cmd(player,PLAYER_2;x,SCREEN_CENTER_X+400-90-10-10;y,SCREEN_CENTER_Y-90;zoom,0);
-		OnCommand=function(self)
-			if(STATSMAN:GetCurStageStats():GetPlayerStageStats("PlayerNumber_P2"):GetGrade()=="Grade_Tier02") then
-				(cmd(sleep,0.2;linear,0.2;zoom,0.675))(self);
-			end;
-		end;
-		OffCommand=cmd(linear,0.2;zoom,0);
-	};
-	LoadActor("Grade_A.png")..{
-		InitCommand=cmd(player,PLAYER_2;x,SCREEN_CENTER_X+400-90-10-10;y,SCREEN_CENTER_Y-90;zoom,0);
-		OnCommand=function(self)
-			if(STATSMAN:GetCurStageStats():GetPlayerStageStats("PlayerNumber_P2"):GetGrade()=="Grade_Tier03") then
-				(cmd(sleep,0.2;linear,0.2;zoom,0.675))(self);
-			end;
-		end;
-		OffCommand=cmd(linear,0.2;zoom,0);
-	};
-	LoadActor("Grade_B.png")..{
-		InitCommand=cmd(player,PLAYER_2;x,SCREEN_CENTER_X+400-90-10-10;y,SCREEN_CENTER_Y-90;zoom,0);
-		OnCommand=function(self)
-			if(STATSMAN:GetCurStageStats():GetPlayerStageStats("PlayerNumber_P2"):GetGrade()=="Grade_Tier04") then
-				(cmd(sleep,0.2;linear,0.2;zoom,0.675))(self);
-			end;
-		end;
-		OffCommand=cmd(linear,0.2;zoom,0);
-	};
-	
-	LoadActor("Grade_C.png")..{
-		InitCommand=cmd(player,PLAYER_2;x,SCREEN_CENTER_X+400-90-10-10;y,SCREEN_CENTER_Y-90;zoom,0);
-		OnCommand=function(self)
-			if(STATSMAN:GetCurStageStats():GetPlayerStageStats("PlayerNumber_P2"):GetGrade()=="Grade_Tier05") then
-				(cmd(sleep,0.2;linear,0.2;zoom,0.675))(self);
-			end;
-		end;
-		OffCommand=cmd(linear,0.2;zoom,0);
-	};
-	LoadActor("Grade_D.png")..{
-		InitCommand=cmd(player,PLAYER_2;x,SCREEN_CENTER_X+400-90-10-10;y,SCREEN_CENTER_Y-90;zoom,0);
-		OnCommand=function(self)
-			if(STATSMAN:GetCurStageStats():GetPlayerStageStats("PlayerNumber_P2"):GetGrade()=="Grade_Tier06") then
-				(cmd(sleep,0.2;linear,0.2;zoom,0.675))(self);
-			end;
-		end;
-		OffCommand=cmd(linear,0.2;zoom,0);
-	};
-
-	LoadActor("Grade_E.png")..{
-		InitCommand=cmd(player,PLAYER_2;x,SCREEN_CENTER_X+400-90-10-10;y,SCREEN_CENTER_Y-90;zoom,0);
-		OnCommand=function(self)
-			if(STATSMAN:GetCurStageStats():GetPlayerStageStats("PlayerNumber_P2"):GetGrade()=="Grade_Tier07") then
-				(cmd(sleep,0.2;linear,0.2;zoom,0.675))(self);
-			end;
-		end;
-		OffCommand=cmd(linear,0.2;zoom,0);
-	};
-	
-	LoadActor("Grade_E.png")..{
-		InitCommand=cmd(player,PLAYER_2;x,SCREEN_CENTER_X+400-90-10-10;y,SCREEN_CENTER_Y-90;zoom,0);
-		OnCommand=function(self)
-			if(STATSMAN:GetCurStageStats():GetPlayerStageStats("PlayerNumber_P2"):GetGrade()=="Grade_Failed") then
-				(cmd(sleep,0.2;linear,0.2;zoom,0.675))(self);
-			end;
-		end;
-		OffCommand=cmd(linear,0.2;zoom,0);
-	};
-
 };
+
+t[#t+1] = Def.ActorFrame{
+	Def.Sprite{
+		InitCommand = function(s) s:draworder(100):player(pn):x(m "GradePNX"):y(m "GradePNY"):zoom(0):diffusealpha(0):rotationz(370):SetAllStateDelays(0.1) end,
+		OnCommand=function(self)
+		local staw = STATSMAN:GetCurStageStats():GetPlayerStageStats(pn):GetStageAward();
+			if staw ~= nil then
+				if((staw =="StageAward_SingleDigitW3") or (staw =="StageAward_OneW3") or (staw =="StageAward_FullComboW3") or string.find(staw,"W3")) then
+					self:Load(THEME:GetPathB("","ScreenEvaluation decorations/grade/FullCombo 1x2.png"));
+				elseif((staw =="StageAward_SingleDigitW2") or (staw =="StageAward_OneW2") or (staw =="StageAward_FullComboW2") ) then
+					self:Load(THEME:GetPathB("","ScreenEvaluation decorations/grade/PerfectFullCombo 1x2.png"));
+				elseif (staw =="StageAward_FullComboW1") then
+					self:Load(THEME:GetPathB("","ScreenEvaluation decorations/grade/MarvelousFullCombo 1x2.png"));
+				end;
+				(cmd(sleep,0.316;linear,0.266;diffusealpha,1;zoom,1;rotationz,0))(self);
+			end;
+		end;
+		OffCommand=cmd(stopeffect;zoomy,0.8;sleep,0.0000;sleep,0.016;linear,0.066;addy,20;diffusealpha,0.56;linear,0.083;diffusealpha,0);
+	};
+} ;
+
 return t;

@@ -65,6 +65,41 @@ t[#t+1] = Def.ActorFrame{
   };
 };
 
+function CircularTween(self, radius, start, stop, numTweenpoints)
+	--[[
+		Start and stop are pi angle values
+		if side == "upper left" then
+			start, stop = 180, 270;
+		elseif side == "upper right" then
+			start, stop = 270, 360;
+		elseif side == "lower left" then
+			start, stop = 90, 180;
+		elseif side == "lower right" then
+			start, stop = 1, 90;
+		elseif side == "left" then
+			start, stop = 90, 180;
+		elseif side == "right" then
+			start, stop = 270, 450;
+		elseif side == "top" then
+			start, stop = 180, 360;
+		elseif side == "bottom" then
+			start, stop = 1, 180;
+		else
+			start, stop = 1, 360;
+		end;
+	]]
+	local tweenXpoints = {};
+	local tweenYpoints = {};
+	for i = start, stop do
+		tweenXpoints = 
+	end;
+	
+	for i = 0,numTweenpoints do
+		local angle = i * math.pi / 180
+		local ptx, pty = x + radius * math.cos( angle ), y + radius * math.sin( angle )
+	end;
+end;
+
 t[#t+1] = Def.ActorFrame {
   GainFocusCommand=cmd(stoptweening;smooth,0.3;y,0;zoom,1);
   LoseFocusCommand=cmd(stoptweening;smooth,0.3;y,100;zoom,1);

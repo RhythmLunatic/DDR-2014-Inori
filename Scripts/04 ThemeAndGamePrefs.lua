@@ -19,9 +19,5 @@ function ScreenGameplay_P2X()
 	end
 end
 function ScreenGameplayLifeY()
-	if not Is2ndMIX() then
-		return SCREEN_TOP+35
-	else
-		return SCREEN_TOP-999
-	end
+	return SCREEN_TOP+35
 end
