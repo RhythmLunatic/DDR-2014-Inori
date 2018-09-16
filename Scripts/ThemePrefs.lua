@@ -12,6 +12,12 @@ local Prefs =
 		Choices = {"Arcade Style", "Wii Style"},
 		Values = {true, false}
 	},
+	TitleScreenVersion =
+	{
+		Default = "Theme",
+		Choices = {"Theme", "DDR 2014", "Current Date"},
+		Values = {"Theme", "DDR 2014", "Current Date"}
+	},
 };
 
 ThemePrefs.InitAll(Prefs)

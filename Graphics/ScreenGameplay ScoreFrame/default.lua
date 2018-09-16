@@ -2,6 +2,27 @@ local t = Def.ActorFrame{
 	LoadActor("mid")..{
 		InitCommand=cmd(CenterX);
 	};
+	--[[LoadFont("Common Normal") .. {
+		InitCommand=cmd(CenterX;addx,-100;addy,-10);
+		--Text="asduahshdiaufhaifjaifujiasdjs";
+		CurrentSongChangedMessageCommand=cmd(playcommand,"Refresh");
+		RefreshCommand=function(self)
+			local vSong = GAMESTATE:GetCurrentSong();
+			local vCourse = GAMESTATE:GetCurrentCourse();
+			local sText = ""
+			if vSong then
+				sText = vSong:GetDisplayFullTitle() .. "\n" .. vSong:GetDisplayArtist()
+			end
+			if vCourse then
+				sText = vSong:GetDisplayFullTitle() .. "\n" .. vSong:GetDisplayArtist()
+			end
+			self:settext( sText );
+			self:horizalign(left);
+			self:playcommand( "On" );
+			self:strokecolor(color("#000000"));
+			self:maxwidth(376);
+		end;
+	};]]
 	Def.TextBanner{
 		InitCommand = function(self) self:Load("TextBannerGameplay")
         	:x(SCREEN_CENTER_X-170):y(-14)
@@ -16,6 +37,7 @@ local t = Def.ActorFrame{
         	self:SetFromSong(GAMESTATE:GetCurrentSong())
         end;
 	};
+	
 };
 
 if GAMESTATE:IsPlayerEnabled('PlayerNumber_P1') then

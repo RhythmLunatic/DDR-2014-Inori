@@ -1,5 +1,4 @@
 -- Base from DDR 5thMix by AJ 187
-
 local stages = Def.ActorFrame {
 	BeginCommand=cmd(playcommand,"Set";);
 	CurrentSongChangedMessageCommand=cmd(finishtweening;playcommand,"Set";);

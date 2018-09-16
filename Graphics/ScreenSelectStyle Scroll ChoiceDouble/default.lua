@@ -91,7 +91,7 @@ function CircularTween(self, radius, start, stop, numTweenpoints)
 	local tweenXpoints = {};
 	local tweenYpoints = {};
 	for i = start, stop do
-		tweenXpoints = 
+		tweenXpoints = nil;
 	end;
 	
 	for i = 0,numTweenpoints do

@@ -15,12 +15,32 @@ end
 local counter = 0;
 local t = Def.ActorFrame{};
 
+local languageToRegion = {
+ja = "J",
+en = "U",
+ch = "C"
+}
 
 t[#t+1] = Def.ActorFrame {
 	Def.BitmapText{
-	Font="Common normal",
-	Text=themeInfo["Name"] .. " " .. themeInfo["Version"] .. " by " .. themeInfo["Author"] .. (SN3Debug and " (debug mode)" or "") ,
-	InitCommand=cmd(halign,0;valign,0;x,SCREEN_LEFT+40;y,SCREEN_TOP+5;shadowlength,1; zoom, 0.6;diffusealpha,0.5)
+		Font="_handelgothic bt 20px",
+		--Text=themeInfo["Name"] .. " " .. themeInfo["Version"] .. " by " .. themeInfo["Author"],
+		InitCommand=function(self)
+			(cmd(halign,0;valign,0;x,SCREEN_LEFT+10;y,SCREEN_TOP+10;shadowlength,1;))(self)
+			local pref = ThemePrefs.Get("TitleScreenVersion");
+			local region = languageToRegion[THEME:GetCurLanguage()];
+			if region == nil then
+				region = "?";
+			end;
+			if pref == "DDR 2014" then
+				self:settext("MDX:"..region..":A:A:2015122100");
+			elseif pref == "Current Date" then
+				self:settextf("MDX:"..region..":A:A:%04d%02d%02d%02d",Year(),MonthOfYear(),DayOfMonth(),0);
+			else
+				self:settext(themeInfo["Name"] .. " " .. themeInfo["Version"] .. " by " .. themeInfo["Author"]);
+				--self:settext(languageToRegion[THEME:GetCurLanguage()]);
+			end;
+		end;
 	};
 }
 

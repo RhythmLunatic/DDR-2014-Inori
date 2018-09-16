@@ -36,10 +36,10 @@ return Def.ActorFrame{
 	};
 
 	LoadActor( "DDR2013_Blend.png" )..{
-		InitCommand=cmd(zoom,1;x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y);
+		InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;zoom,.95;addy,-3);
 		OnCommand=cmd(blend,'BlendMode_Add';diffusealpha,0;sleep,2.6;playcommand,"Animate");
-		AnimateCommand=cmd(zoom,1;diffusealpha,0;accelerate,0.8;zoom,1;diffusealpha,0.6;
-		decelerate,0.8;zoom,1;diffusealpha,0;sleep,0.5;queuecommand,"Animate");
+		AnimateCommand=cmd(diffusealpha,0;accelerate,0.8;diffusealpha,0.6;
+		decelerate,0.8;diffusealpha,0;sleep,0.5;queuecommand,"Animate");
 
 	};
 -- Soustitre
