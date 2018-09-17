@@ -149,20 +149,9 @@ t[#t+1] = StandardDecorationFromFileOptional( "GrooveRadarP1_Default", "GrooveRa
 t[#t+1] = StandardDecorationFromFileOptional( "GrooveRadarP2_Default", "GrooveRadarP2_Default" );
 --Meterp1
 
+--
 local function GetLargeDiffInd(d)
-	local r=0;
-	if d == "Difficulty_Beginner" then
-		r=1;
-	elseif d == "Difficulty_Easy" then
-		r=0;
-	elseif d == "Difficulty_Medium" then
-		r=3;
-	elseif d == "Difficulty_Hard" then
-		r=4;
-	elseif d == "Difficulty_Challenge" then
-		r=2;
-	end;
-	return r;
+	return Difficulty:Reverse()[d];
 end;
 
 t[#t+1] = LoadFont("ScreenSelectMusic difficulty.ini") .. {
@@ -187,7 +176,7 @@ t[#t+1] = LoadFont("ScreenSelectMusic difficulty.ini") .. {
 
 --descriptionP1
 t[#t+1] = Def.Sprite{
-	Texture = "LargeDiff 1x5.png";
+	Texture = "LargeDiff 1x6.png";
 	InitCommand=cmd(x,SCREEN_LEFT+260-15;y,SCREEN_CENTER_Y-190-13;player,PLAYER_1;pause);
 	OffCommand=cmd(bouncebegin,0.25;zoom,0);
 	CurrentSongChangedMessageCommand=cmd(queuecommand,"Set");
@@ -198,7 +187,8 @@ t[#t+1] = Def.Sprite{
 			if GAMESTATE:IsHumanPlayer(PLAYER_1) then
 			local diff = GAMESTATE:GetCurrentSteps(PLAYER_1):GetDifficulty();
 				self:diffusealpha(1)
-				self:setstate(GetLargeDiffInd(diff, st, song))
+				self:setstate(GetLargeDiffInd(diff))
+				--self:setstate(1);
 			else
 				self:diffusealpha(0)
 			end;
@@ -230,7 +220,7 @@ t[#t+1] = LoadFont("ScreenSelectMusic difficulty.ini") .. {
 
 --descriptionP2
 t[#t+1] = Def.Sprite{
-	Texture = "LargeDiff 1x5.png";
+	Texture = "LargeDiff 1x6.png";
 	InitCommand=cmd(x,SCREEN_RIGHT-260+15;y,SCREEN_CENTER_Y-190-13;player,PLAYER_2;pause);
 	OffCommand=cmd(bouncebegin,0.25;zoom,0);
 	CurrentSongChangedMessageCommand=cmd(queuecommand,"Set");

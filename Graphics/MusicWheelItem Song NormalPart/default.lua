@@ -45,6 +45,57 @@ local t = Def.ActorFrame {
 					self:y(-2)
 				else
 					self:Load(THEME:GetPathG("","MusicWheelItem Song NormalPart/Backing.png"));
+					local so = GAMESTATE:GetSortOrder();
+					if so == "SortOrder_Title" or so == "SortOrder_Artist" then
+						self:diffuse(color("#fff582"));
+					elseif so == "SortOrder_BeginnerMeter" or so == "SortOrder_EasyMeter" or so == "SortOrder_MediumMeter" or so == "SortOrder_HardMeter" or so == "SortOrder_ChallengeMeter" then
+						self:diffuse(color("#0167ae"));
+					elseif so == "SortOrder_BPM" then
+						self:diffuse(color("#69ebca"));
+					elseif so == "SortOrder_Popularity" then
+						self:diffuse(color("#b679fd"));
+					elseif so == "SortOrder_TopGrades" then
+						self:diffuse(color("#7dff44"));	
+					elseif so == "SortOrder_Genre" then
+						--TODO: use group_colors
+						if group == "Pop" then
+							self:diffuse(color("#ffbe32"));
+						elseif group == "Anime/Game" then
+							self:diffuse(color("#fff582"));
+						elseif group == "Variety" then
+							self:diffuse(color("#eb8cc8"));
+						elseif group == "GUMI 5th anniversary" then
+							self:diffuse(color("#b8e267"));
+						elseif group == "U.M.U. x BEMANI" then
+							self:diffuse(color("#fbafb4"));
+						elseif group == "KONAMI originals" then
+							self:diffuse(color("#fa4b3c"));
+						elseif group == "beatmania IIDX" then
+							self:diffuse(color("#0165ac"));
+						elseif group == "pop'n music" then
+							self:diffuse(color("#fff582"));
+						elseif group == "GITADORA" then
+							self:diffuse(color("#a592d5"));
+						elseif group == "jubeat" then
+							self:diffuse(color("#f1f5fb"));
+						elseif group == "REFLEC BEAT" then
+							self:diffuse(color("#81f1a9"));
+						elseif group == "DanceEvolution" then
+							self:diffuse(color("#12d0f2"));
+						elseif group == "SOUND VOLTEX" then
+							self:diffuse(color("#eb8cc8"));
+						elseif group == "FutureTomTom" then
+							self:diffuse(color("#fff582"));	
+						elseif group == "DDR" then
+							self:diffuse(color("#43ff9d"));
+						else 
+							self:diffuse(color("#ffffff"));					
+						end;
+					else
+						--self:diffuse(color(color_grp))
+						self:diffuse(color("White"));
+						self:diffusealpha(1)
+					end;
 					self:y(-2):setsize(174,210)
 					self:diffusealpha(1);
 				end;

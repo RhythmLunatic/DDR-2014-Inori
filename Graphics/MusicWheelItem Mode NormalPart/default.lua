@@ -1,5 +1,5 @@
 return Def.ActorFrame {
-	Def.Sprite{
+	--[[Def.Sprite{
 		InitCommand=cmd(setsize,174,210);
 		SetMessageCommand=function(self,params)
 			local so = GAMESTATE:GetSortOrder();
@@ -10,5 +10,5 @@ return Def.ActorFrame {
 				self:setsize(174,210)
 			end;
 		end;
-	};
+	};]]
 };

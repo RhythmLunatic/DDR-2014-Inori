@@ -16,7 +16,7 @@ t[#t+1] = Def.ActorFrame{
   Def.Sprite {
 		SetMessageCommand=function(self,params)
       if set then
-				self:Load(THEME:GetPathG("","_jackets/sort/"..set..".png"))
+				self:Load(THEME:GetPathG("","_jackets/sort/"..set))
       end;
 				self:diffusealpha(1);
 				self:y(-2)

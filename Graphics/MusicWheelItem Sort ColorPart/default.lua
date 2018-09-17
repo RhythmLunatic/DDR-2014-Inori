@@ -6,7 +6,7 @@ return Def.ActorFrame {
 			local label = params.Label;
 		--	if label then
 			if so == "SortOrder_ModeMenu" then
-				self:Load( THEME:GetPathG("MusicWheelItem","Sort ColorPart/SortBanner/"..label) );
+				self:Load( THEME:GetPathG("","_jackets/sort/"..label) );
 				self:setsize(174,210)
 			end;
 		end;

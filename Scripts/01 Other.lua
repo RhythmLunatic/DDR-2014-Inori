@@ -341,3 +341,16 @@ end
 -- GetCharAnimPath(sPath)
 -- Easier access to Characters folder (taken from ScreenHowToPlay.cpp)
 function GetCharAnimPath(sPath) return "/Characters/"..sPath end
+
+function implode(d,p)
+  local newstr
+  newstr = ""
+  if(#p == 1) then
+    return p[1]
+  end
+  for ii = 1, (#p-1) do
+    newstr = newstr .. p[ii] .. d
+  end
+  newstr = newstr .. p[#p]
+  return newstr
+end

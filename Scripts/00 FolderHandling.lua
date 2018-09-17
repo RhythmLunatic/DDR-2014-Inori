@@ -63,4 +63,6 @@ group_colors= {
 		["GUMI 5th anniversary"]=	"#b8e267",
 		["U.M.U. x BEMANI"]= "#fbafb4",
 		["KONAMI originals"]= "#fa4b3c",
+		["beatmania IIDX"]="#0165ac",
+		["pop'n music"]="#fff582"
 	}
