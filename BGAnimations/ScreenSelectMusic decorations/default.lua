@@ -1110,13 +1110,13 @@ InitCommand=cmd(addy,-110);
 	};
 };
 
-t[#t+1] = Def.ActorFrame{
+--[[t[#t+1] = Def.ActorFrame{
 	LoadActor("base")..{
 		InitCommand=cmd(Center;diffusealpha,0;draworder,20);
 		StartSelectingStepsMessageCommand=cmd(diffusealpha,0);
 		SongUnchosenMessageCommand=cmd(diffusealpha,0)
 	};
-};
+};]]
 
 
 t[#t+1] = Def.ActorFrame{

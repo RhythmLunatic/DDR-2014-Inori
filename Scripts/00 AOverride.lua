@@ -20,3 +20,13 @@ function setenv(name, value)
 	local env = GAMESTATE:Env()
 	env[name] = value
 end
+
+function GetSongGroupJacketPath(groupName)
+ local path= SONGMAN:GetSongGroupBannerPath(groupName)
+if path == "" then return nil end
+local last_slash= path:reverse():find("/")
+local g = path:sub(1, -last_slash) .. "jacket.png"
+if FILEMAN:DoesFileExist(g) then
+	return g
+end;
+end;

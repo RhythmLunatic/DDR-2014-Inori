@@ -7,7 +7,7 @@ local t = Def.ActorFrame{
 			group = params.Text;
 			local so = GAMESTATE:GetSortOrder();
 			if group then
-				if group_name[group] ~= nil then
+				if group_name[group] then
 					local filePath = THEME:GetPathG("","_jackets/group/"..group_name[group]..".png");
 					self:Load(filePath)
 					self:diffusealpha(1);
@@ -36,6 +36,25 @@ local t = Def.ActorFrame{
 						local color_grp= group_colors[group] or "#FFFFFF"
 						self:diffuse(color(color_grp));
 					end;
+				end;
+				
+			end;
+		end;
+	};
+	
+	--Hide the group backing thing with "_extend" graphics
+	Def.Sprite {
+		SetMessageCommand=function(self,params)
+			group = params.Text;
+			if group then
+				if group_name[group] then
+					local filePath = THEME:GetPathG("","_jackets/group/_extend/"..group_extend[group_name[group]]..".png");
+					self:Load(filePath)
+					self:diffusealpha(1);
+					self:y(-2)
+					self:x(74);
+				else
+					self:diffusealpha(0);
 				end;
 				
 			end;
@@ -116,7 +135,12 @@ local t = Def.ActorFrame{
 						self:Load( THEME:GetPathG("","_No banner") );
 						self:diffusealpha(0);
 					else
-						self:LoadFromSongGroup(group);
+						local g = GetSongGroupJacketPath(group)
+						if g then
+							self:Load(g)
+						else
+							self:LoadFromSongGroup(group);
+						end;
 						self:diffusealpha(1);
 					end;
 				end;
@@ -188,7 +212,7 @@ local t = Def.ActorFrame{
 					self:diffusealpha(0);
 				end;
 			elseif so == "SortOrder_Group" then
-					if group=='DanceDanceRevolution 1stMIX' then
+					--[[if group=='DanceDanceRevolution 1stMIX' then
 					self:diffusealpha(1);
 					self:Load(THEME:GetPathG("group name","1st"));
 					elseif group=='DanceDanceRevolution 2ndMIX' then
@@ -235,7 +259,8 @@ local t = Def.ActorFrame{
 					self:Load(THEME:GetPathG("group name","DDR"));
 					else
 					self:diffusealpha(0);
-					end;
+					end;]]
+					self:diffusealpha(0);
 				end;
 			end;
 		end;

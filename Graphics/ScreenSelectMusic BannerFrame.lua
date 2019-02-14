@@ -1,4 +1,10 @@
-local t = Def.ActorFrame{}
+--local musicWheel;
+local t = Def.ActorFrame{
+	--[[OnCommand=function(self)
+		SCREENMAN:SystemMessage("I AM HERE!");
+	end;]]
+
+}
 
 t[#t+1] = Def.ActorFrame {
  	InitCommand=cmd(CenterX;y,SCREEN_CENTER_Y-110-5-15-8;diffusealpha,1;draworder,1);
@@ -56,29 +62,35 @@ t[#t+1] = Def.ActorFrame{
 	OffCommand=cmd(sleep,0.2;bouncebegin,0.175;zoomy,0);
   Def.Banner {
     SetCommand=function(self,params)
-    if not GAMESTATE:IsCourseMode() then
-    local song = GAMESTATE:GetCurrentSong();
-      if not song then
-        local group = getenv("getgroupname");
-        if group==group_name[group] then
-          self:diffusealpha(0)
-        else
-          self:LoadFromSongGroup(group);
-          self:diffusealpha(1)
-          self:zoomtowidth(304);
-          self:zoomtoheight(304);
-        end;
-      else
-          self:diffusealpha(0);
-          self:Load(THEME:GetPathG("","Common fallback jacket"));
-          self:zoomtowidth(304);
-          self:zoomtoheight(304);
-      end;
-  else
-    self:diffusealpha(0);
-  end;
+		if not GAMESTATE:IsCourseMode() then
+			local song = GAMESTATE:GetCurrentSong();
+			if not song then
+				local group = getenv("getgroupname");
+				if group==group_name[group] then
+					self:diffusealpha(0)
+				else
+					local g = GetSongGroupJacketPath(group)
+					if g then
+						self:Load(g)
+					else
+						self:LoadFromSongGroup(group);
+					end;
+					self:diffusealpha(1)
+					self:zoomtowidth(304);
+					self:zoomtoheight(304);
+				end;
+			else
+				self:diffusealpha(0);
+				self:Load(THEME:GetPathG("","Common fallback jacket"));
+				self:zoomtowidth(304);
+				self:zoomtoheight(304);
+			end;
+		else
+			self:diffusealpha(0);
+		end;
   end;
   CurrentSongChangedMessageCommand=function(self, params)
+	--SCREENMAN:SystemMessage("fucj you");
     self:playcommand("Set", params);
   end;
   };

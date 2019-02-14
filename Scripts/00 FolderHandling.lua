@@ -1,24 +1,25 @@
 group_name = {
-  ["01 - DDR 1st"] = "01 - DDR 1st";
-  ["02 - DDR 2ndMIX"] = "02 - DDR 2ndMIX";
-  ["03 - DDR 3rdMIX"] = "03 - DDR 3rdMIX";
-  ["04 - DDR 4thMIX"] = "04 - DDR 4thMIX";
-  ["05 - DDR 5thMIX"] = "05 - DDR 5thMIX";
-  ["06 - DDR MAX"] = "06 - DDR MAX";
-  ["07 - DDR MAX2"] = "07 - DDR MAX2";
-  ["08 - DDR EXTREME"] = "08 - DDR EXTREME";
-  ["09 - DDR SuperNOVA"] = "09 - DDR SuperNOVA";
-  ["10 - DDR SuperNOVA2"] = "10 - DDR SuperNOVA2";
-  ["11 - DDR X"] = "11 - DDR X";
-  ["12 - DDR X2"] = "12 - DDR X2";
-  ["13 - DDR X3 vs 2ndMIX"] = "13 - DDR X3 vs 2ndMIX";
-  ["14 - DDR 2013"] = "14 - DDR 2013";
-  ["15 - DDR 2014"] = "15 - DDR 2014";
+  ["DanceDanceRevolution 1stMIX"] = "01 - DDR 1st";
+  ["DanceDanceRevolution 2ndMIX"] = "02 - DDR 2ndMIX";
+  ["DanceDanceRevolution 3rdMIX"] = "03 - DDR 3rdMIX";
+  ["DanceDanceRevolution 4thMIX"] = "04 - DDR 4thMIX";
+  ["DanceDanceRevolution 5thMIX"] = "05 - DDR 5thMIX";
+  ["DanceDanceRevolution 6thMIX MAX"] = "06 - DDR MAX";
+  ["DanceDanceRevolution 7thMIX MAX2"] = "07 - DDR MAX2";
+  ["DanceDanceRevolution 8thMIX EXTREME"] = "08 - DDR EXTREME";
+  ["DanceDanceRevolution SuperNOVA"] = "09 - DDR SuperNOVA";
+  ["DanceDanceRevolution SuperNOVA2"] = "10 - DDR SuperNOVA2";
+  ["DanceDanceRevolution X"] = "11 - DDR X";
+  ["DanceDanceRevolution X2"] = "12 - DDR X2";
+  ["DanceDanceRevolution X3 vs 2ndMIX"] = "13 - DDR X3 vs 2ndMIX";
+  ["DDR 2013"] = "14 - DDR 2013";
+  ["DDR 2014"] = "15 - DDR 2014";
   ["16 - DDR A"] = "16 - DDR A";
-  ["18 - DDR SuperNOVA3"] = "18 - DDR SuperNOVA3";
+  ["DanceDanceRevolution SuperNOVA3"] = "18 - DDR SuperNOVA3";
   ["00 - BOSS ON PARADE"] = "00 - BOSS ON PARADE";
 };
 
+--TODO: Remove this and turn group_name into a table
 group_extend = {
   ["01 - DDR 1st"] = "yellow green";
   ["02 - DDR 2ndMIX"] = "pink";

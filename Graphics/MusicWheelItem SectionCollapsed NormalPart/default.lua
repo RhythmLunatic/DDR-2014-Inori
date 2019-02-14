@@ -1,12 +1,49 @@
+local so;
+local song;
 local group;
 
 local t = Def.ActorFrame{
+	OnCommand=function(self)
+		--assert(false,"ASADADASDSADASDD");
+		--SCREENMAN:SystemMessage("Asdadsasdadad");
+		--self:playcommandonchildren("Update");
+	end;
+	SetMessageCommand=function(self,params)
+		group = params.Text;
+		song = params.Song;
+		so = GAMESTATE:GetSortOrder();
+		--Does not work
+		--self:playcommandonchildren("Update");
+		--[[for i,a in ipairs(self:GetChildren()) do
+			--a:playcommand("Update");
+			SCREENMAN:SystemMessage(a:GetName());
+			--i:GetName
+		end;]]
+		--self:GetChildren()[1]:playcommand("Update");
+		--SCREENMAN:SystemMessage(#self:GetChildren())
+		
+		--This is beyond stupid
+		if group then
+			if params.HasFocus then
+				setenv("getgroupname",group);
+			end;
+			self:GetChild("Backing"):playcommand("Update");
+			self:GetChild("SongBanner"):playcommand("Update");
+			self:GetChild("Title"):playcommand("Update");
+			self:GetChild("TitleLeftOutline"):playcommand("Update");
+			self:GetChild("TitleLeft"):playcommand("Update");
+		end;
+	end;
+
+
+
 	--group backing
 	Def.Sprite {
-		SetMessageCommand=function(self,params)
-			group = params.Text;
-			local so = GAMESTATE:GetSortOrder();
+		Name="Backing";
+		UpdateCommand=function(self)
+			--SCREENMAN:SystemMessage("asdasda");
 			if group then
+				--SCREENMAN:SystemMessage(group)
 				if group_name[group] ~= nil then
 					local filePath = THEME:GetPathG("","_jackets/group/"..group_name[group]..".png");
 					self:Load(filePath)
@@ -65,14 +102,8 @@ local t = Def.ActorFrame{
 	Def.Banner {
 		Name="SongBanner";
 		InitCommand=cmd(scaletoclipped,128,128;addx,-4;addy,2;diffusealpha,0;);
-		SetMessageCommand=function(self,params)
-			local pt_text = params.Text;
-			local group = params.Text;
+		UpdateCommand=function(self)
 			if group then
-				if params.HasFocus then
-					setenv("getgroupname",pt_text);
-				end;
-				local so = GAMESTATE:GetSortOrder();
 				if so == "SortOrder_Title" then
 					if group ~= "" then
 						self:Load(THEME:GetPathG("group title",group));
@@ -116,7 +147,12 @@ local t = Def.ActorFrame{
 						self:Load( THEME:GetPathG("","_No banner") );
 						self:diffusealpha(0);
 					else
-						self:LoadFromSongGroup(group);
+						local g = GetSongGroupJacketPath(group)
+						if g then
+							self:Load(g)
+						else
+							self:LoadFromSongGroup(group);
+						end;
 						self:diffusealpha(1);
 					end;
 				end;
@@ -130,154 +166,151 @@ local t = Def.ActorFrame{
 	};
 	--Titles
 	Def.Sprite {
+		Name="Title";
 		InitCommand=cmd(addx,-5;addy,-40;zoom,.7);
-		SetMessageCommand=function(self,params)
-		group = params.Text;
-		local so = GAMESTATE:GetSortOrder();
+		UpdateCommand=function(self)
 			if group then
-			if so == "SortOrder_Title" then
-				self:diffusealpha(1);
-				self:Load(THEME:GetPathG("group name","Alphabet"));
-			elseif so == "SortOrder_BeginnerMeter" or so == "SortOrder_EasyMeter" or so == "SortOrder_MediumMeter" or so == "SortOrder_HardMeter" or so == "SortOrder_ChallengeMeter" then
-				self:diffusealpha(1);
-				self:Load(THEME:GetPathG("group name","Dance Level"));
-			elseif so == "SortOrder_BPM" then
-				self:diffusealpha(1);
-				self:Load(THEME:GetPathG("group name","BPM"));
-			elseif so == "SortOrder_Popularity" then
-				self:diffusealpha(1);
-				self:Load(THEME:GetPathG("group name","Popularity"));
-			elseif so == "SortOrder_TopGrades" then
-				self:diffusealpha(1);
-				self:Load(THEME:GetPathG("group name","Cleared Rank"));
-			elseif so == "SortOrder_Genre" then
-				self:diffusealpha(1);
-				--genre sort
-				if group == "Pop" then
-				self:Load(THEME:GetPathG("group name genre","Pop"));
-				elseif group == "Anime/Game" then
-				self:Load(THEME:GetPathG("group name genre","AnimeGame"));
-				elseif group == "Variety" then
-				self:Load(THEME:GetPathG("group name genre","Variety"));
-				elseif group == "GUMI 5th anniversary" then
-				self:Load(THEME:GetPathG("group name genre","GUMI"));
-				elseif group == "U.M.U. x BEMANI" then
-				self:Load(THEME:GetPathG("group name genre","UMU"));
-				elseif group == "KONAMI originals" then
-				self:Load(THEME:GetPathG("group name genre","KONAMI"));
-				--series sort
-				elseif group == "beatmania IIDX" then
-				self:Load(THEME:GetPathG("group name series","IIDX"));
-				elseif group == "pop'n music" then
-				self:Load(THEME:GetPathG("group name series","popn"));
-				elseif group == "GITADORA" then
-				self:Load(THEME:GetPathG("group name series","GITADORA"));
-				elseif group == "jubeat" then
-				self:Load(THEME:GetPathG("group name series","jubeat"));
-				elseif group == "REFLEC BEAT" then
-				self:Load(THEME:GetPathG("group name series","RB"));
-				elseif group == "DanceEvolution" then
-				self:Load(THEME:GetPathG("group name series","DanceEvolution"));
-				elseif group == "SOUND VOLTEX" then
-				self:Load(THEME:GetPathG("group name series","SDVX"));
-				elseif group == "FutureTomTom" then
-				self:Load(THEME:GetPathG("group name series","FutureTomTom"));
-				elseif group == "DDR" then
-				self:Load(THEME:GetPathG("group name","DDR"));
-				else
-					self:diffusealpha(0);
-				end;
-			elseif so == "SortOrder_Group" then
-					if group=='DanceDanceRevolution 1stMIX' then
+				if so == "SortOrder_Title" then
 					self:diffusealpha(1);
-					self:Load(THEME:GetPathG("group name","1st"));
-					elseif group=='DanceDanceRevolution 2ndMIX' then
+					self:Load(THEME:GetPathG("group name","Alphabet"));
+				elseif so == "SortOrder_BeginnerMeter" or so == "SortOrder_EasyMeter" or so == "SortOrder_MediumMeter" or so == "SortOrder_HardMeter" or so == "SortOrder_ChallengeMeter" then
 					self:diffusealpha(1);
-					self:Load(THEME:GetPathG("group name","2nd"));
-					elseif group=='DanceDanceRevolution 3rdMIX' then
+					self:Load(THEME:GetPathG("group name","Dance Level"));
+				elseif so == "SortOrder_BPM" then
 					self:diffusealpha(1);
-					self:Load(THEME:GetPathG("group name","3rd"));
-					elseif group=='DanceDanceRevolution 4thMIX' then
+					self:Load(THEME:GetPathG("group name","BPM"));
+				elseif so == "SortOrder_Popularity" then
 					self:diffusealpha(1);
-					self:Load(THEME:GetPathG("group name","4th"));	
-					elseif group=='DanceDanceRevolution 5thMIX' then
+					self:Load(THEME:GetPathG("group name","Popularity"));
+				elseif so == "SortOrder_TopGrades" then
 					self:diffusealpha(1);
-					self:Load(THEME:GetPathG("group name","5th"));	
-					elseif group=='DanceDanceRevolution 6thMIX MAX' then
+					self:Load(THEME:GetPathG("group name","Cleared Rank"));
+				elseif so == "SortOrder_Genre" then
 					self:diffusealpha(1);
-					self:Load(THEME:GetPathG("group name","MAX1"));	
-					elseif group=='DanceDanceRevolution 7thMIX MAX2' then
-					self:diffusealpha(1);
-					self:Load(THEME:GetPathG("group name","MAX2"));	
-					elseif group=='DanceDanceRevolution 8thMIX EXTREME' then
-					self:diffusealpha(1);
-					self:Load(THEME:GetPathG("group name","Extreme"));	
-					elseif group=='DanceDanceRevolution SuperNOVA' then
-					self:diffusealpha(1);
-					self:Load(THEME:GetPathG("group name","SN1"));
-					elseif group=='DanceDanceRevolution SuperNOVA2' then
-					self:diffusealpha(1);
-					self:Load(THEME:GetPathG("group name","SN2"));
-					elseif group=='DanceDanceRevolution X' then
-					self:diffusealpha(1);
-					self:Load(THEME:GetPathG("group name","X1"));
-					elseif group=='DanceDanceRevolution X2' then
-					self:diffusealpha(1);
-					self:Load(THEME:GetPathG("group name","X2"));
-					elseif group=='DanceDanceRevolution X3' then
-					self:diffusealpha(1);
-					self:Load(THEME:GetPathG("group name","X3"));
-					elseif group=='DDR 2013' then
-					self:diffusealpha(1);
-					self:Load(THEME:GetPathG("group name","2013"));
-					elseif group=='DDR 2014' then
-					self:diffusealpha(1);
+					--genre sort
+					if group == "Pop" then
+					self:Load(THEME:GetPathG("group name genre","Pop"));
+					elseif group == "Anime/Game" then
+					self:Load(THEME:GetPathG("group name genre","AnimeGame"));
+					elseif group == "Variety" then
+					self:Load(THEME:GetPathG("group name genre","Variety"));
+					elseif group == "GUMI 5th anniversary" then
+					self:Load(THEME:GetPathG("group name genre","GUMI"));
+					elseif group == "U.M.U. x BEMANI" then
+					self:Load(THEME:GetPathG("group name genre","UMU"));
+					elseif group == "KONAMI originals" then
+					self:Load(THEME:GetPathG("group name genre","KONAMI"));
+					--series sort
+					elseif group == "beatmania IIDX" then
+					self:Load(THEME:GetPathG("group name series","IIDX"));
+					elseif group == "pop'n music" then
+					self:Load(THEME:GetPathG("group name series","popn"));
+					elseif group == "GITADORA" then
+					self:Load(THEME:GetPathG("group name series","GITADORA"));
+					elseif group == "jubeat" then
+					self:Load(THEME:GetPathG("group name series","jubeat"));
+					elseif group == "REFLEC BEAT" then
+					self:Load(THEME:GetPathG("group name series","RB"));
+					elseif group == "DanceEvolution" then
+					self:Load(THEME:GetPathG("group name series","DanceEvolution"));
+					elseif group == "SOUND VOLTEX" then
+					self:Load(THEME:GetPathG("group name series","SDVX"));
+					elseif group == "FutureTomTom" then
+					self:Load(THEME:GetPathG("group name series","FutureTomTom"));
+					elseif group == "DDR" then
 					self:Load(THEME:GetPathG("group name","DDR"));
 					else
-					self:diffusealpha(0);
+						self:diffusealpha(0);
+					end;
+				elseif so == "SortOrder_Group" then
+						--[[if group=='DanceDanceRevolution 1stMIX' then
+						self:diffusealpha(1);
+						self:Load(THEME:GetPathG("group name","1st"));
+						elseif group=='DanceDanceRevolution 2ndMIX' then
+						self:diffusealpha(1);
+						self:Load(THEME:GetPathG("group name","2nd"));
+						elseif group=='DanceDanceRevolution 3rdMIX' then
+						self:diffusealpha(1);
+						self:Load(THEME:GetPathG("group name","3rd"));
+						elseif group=='DanceDanceRevolution 4thMIX' then
+						self:diffusealpha(1);
+						self:Load(THEME:GetPathG("group name","4th"));	
+						elseif group=='DanceDanceRevolution 5thMIX' then
+						self:diffusealpha(1);
+						self:Load(THEME:GetPathG("group name","5th"));	
+						elseif group=='DanceDanceRevolution 6thMIX MAX' then
+						self:diffusealpha(1);
+						self:Load(THEME:GetPathG("group name","MAX1"));	
+						elseif group=='DanceDanceRevolution 7thMIX MAX2' then
+						self:diffusealpha(1);
+						self:Load(THEME:GetPathG("group name","MAX2"));	
+						elseif group=='DanceDanceRevolution 8thMIX EXTREME' then
+						self:diffusealpha(1);
+						self:Load(THEME:GetPathG("group name","Extreme"));	
+						elseif group=='DanceDanceRevolution SuperNOVA' then
+						self:diffusealpha(1);
+						self:Load(THEME:GetPathG("group name","SN1"));
+						elseif group=='DanceDanceRevolution SuperNOVA2' then
+						self:diffusealpha(1);
+						self:Load(THEME:GetPathG("group name","SN2"));
+						elseif group=='DanceDanceRevolution X' then
+						self:diffusealpha(1);
+						self:Load(THEME:GetPathG("group name","X1"));
+						elseif group=='DanceDanceRevolution X2' then
+						self:diffusealpha(1);
+						self:Load(THEME:GetPathG("group name","X2"));
+						elseif group=='DanceDanceRevolution X3' then
+						self:diffusealpha(1);
+						self:Load(THEME:GetPathG("group name","X3"));
+						elseif group=='DDR 2013' then
+						self:diffusealpha(1);
+						self:Load(THEME:GetPathG("group name","2013"));
+						elseif group=='DDR 2014' then
+						self:diffusealpha(1);
+						self:Load(THEME:GetPathG("group name","DDR"));
+						else
+						self:diffusealpha(0);
+						end;]]
+						self:diffusealpha(0);
 					end;
 				end;
 			end;
-		end;
 		};
 	LoadFont("_itc avant garde std bk 20px")..{
+		Name="TitleLeftOutline";
 		InitCommand=cmd(y,-84;addx,-4;maxwidth,150);
-		SetMessageCommand=function(self, params)
-			local song = params.Song;
-			group = params.Text;
-			local so = GAMESTATE:GetSortOrder();
-			if group_name[group] ~= nil then
-				self:settext("");
-			else
-				if so == "SortOrder_Group" then
-					self:settext(string.gsub(params.Text,"^%d%d? ?%- ?", ""));
-					self:strokecolor(color("#000000"))
-					self:diffuse(color("#000000"));
-				elseif so == "SortOrder_TopGrades" then
-					--self:settext(group);
+		UpdateCommand=function(self)
+			if so == "SortOrder_Group" then
+				if group_name[group] then
 					self:settext("");
 				else
-					self:settext("");
+					self:settext(string.gsub(group,"^%d%d? ?%- ?", ""));
+					self:strokecolor(color("#000000"))
+					self:diffuse(color("#000000"));
 				end;
+			elseif so == "SortOrder_TopGrades" then
+				--self:settext(group);
+				self:settext("");
+			else
+				self:settext("");
 			end;
 		end;
 	};
 	LoadFont("_itc avant garde std bk 20px")..{
+		Name="TitleLeft";
 		InitCommand=cmd(y,-86;addx,-4;maxwidth,150);
-		SetMessageCommand=function(self, params)
-			local song = params.Song;
-			group = params.Text;
-			local so = GAMESTATE:GetSortOrder();
-			if group_name[group] ~= nil then
-				self:settext("");
-			else
-				if so == "SortOrder_Group" then
-					self:settext(string.gsub(params.Text,"^%d%d? ?%- ?", ""));
+		UpdateCommand=function(self)
+			if so == "SortOrder_Group" then
+				
+				if group_name[group] then
+					self:settext("");
+				else
+					self:settext(string.gsub(group,"^%d%d? ?%- ?", ""));
 					self:strokecolor(color("#000000"))
 					self:diffuse(color("#FFFFFF"));
-				else
-					self:settext("");
 				end;
+			else
+				self:settext("");
 			end;
 		end;
 	};

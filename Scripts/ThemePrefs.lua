@@ -18,6 +18,12 @@ local Prefs =
 		Choices = {"Theme", "DDR 2014", "Current Date"},
 		Values = {"Theme", "DDR 2014", "Current Date"}
 	},
+	TwoPartSelect =
+	{
+		Default = false,
+		Choices = {"No", "Yes"},
+		Values = {false, true}
+	}
 };
 
 ThemePrefs.InitAll(Prefs)

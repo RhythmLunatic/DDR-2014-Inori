@@ -36,7 +36,7 @@ local t = Def.ActorFrame {
 		group = params.Text;
 		local so = GAMESTATE:GetSortOrder();
 			if group then
-				if group == group_name[group] then
+				if group_name[group] then
 					local group_extender1 = group_name[group];
 					local group_extender2 = group_extend[group_extender1];
 					self:Load(THEME:GetPathG("","_jackets/backing/full/"..group_extender2..".png"))
