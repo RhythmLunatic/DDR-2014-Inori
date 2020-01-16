@@ -148,8 +148,9 @@ Branch.Ending = function()
 	return (STATSMAN:GetBestFinalGrade() <= 'Grade_Tier03' and SN3Debug) and "ScreenCredits" or "ScreenMusicScroll"
 end
 
+--This function is not called
 Branch.AfterProfileLoad = function()
-	return "ScreenSelectStyle"
+	return "ScreenSelectStyleCustom"
 end
 
 Branch.AfterSelectStyle = function()

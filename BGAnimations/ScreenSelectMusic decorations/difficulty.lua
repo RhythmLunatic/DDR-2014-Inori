@@ -1,9 +1,6 @@
 -- This variable was passed in to this file (actor) from the parent default.lua
 local player = ...
  
--- initialize this value to be false
-local ThisPlayerPaneIsOpen = false
- 
 local function GetDifListX(self,offset)
         if player==PLAYER_1 then
                 self:x(150+offset)
@@ -13,25 +10,9 @@ local function GetDifListX(self,offset)
 end
  
 local function DrawDifListItem(diff)
- 
-        local DifficultyListItem = Def.ActorFrame {
- 
+        return Def.ActorFrame {
                 InitCommand=cmd(y, _screen.cy-204 ),
-                CurrentSongChangedMessageCommand=cmd(playcommand,"Set"),
-                CurrentStepsP1ChangedMessageCommand=function(self) if player == PLAYER_1 then self:playcommand("Set") end end,
-                CurrentStepsP2ChangedMessageCommand=function(self) if player == PLAYER_2 then self:playcommand("Set") end end,
-                CurrentTrailP1ChangedMessageCommand=function(self) if player == PLAYER_1 then self:playcommand("Set") end end,
-                CurrentTrailP2ChangedMessageCommand=function(self) if player == PLAYER_2 then self:playcommand("Set") end end,
-                CurrentCourseChangedMessageCommand=cmd(playcommand,"Set"),
-				OffCommand=function(self)
-					if player == PLAYER_1 then
-						(cmd(sleep,0.15; linear,0.25; addx,-500))(self);
-					elseif player == PLAYER_2 then
-						(cmd(sleep,0.15; linear,0.25; addx,500))(self);
-					end;
-				end;
-               
-                --disabled
+                --If the song does not have this difficulty
                 Def.Quad{
                         InitCommand=cmd(diffuse,color("#000000");setsize,490,50;zoom,0.7),
                         SetCommand=function(self)
@@ -257,114 +238,85 @@ local function DrawDifListItem(diff)
                 end
                 }
         }
- 
-        return DifficultyListItem
 end
  
 local t = Def.ActorFrame {
-        CodeMessageCommand=function(self,params)
-                if params.PlayerNumber == player then
-                        if params.Name == "OpenPanes1" and not ThisPlayerPaneIsOpen then
-                                self:diffusealpha(1)
-                                ThisPlayerPaneIsOpen = true
-						elseif params.Name == "OpenPanes2" or params.Name == "OpenPanes3" then
-								self:diffusealpha(0);
-								ThisPlayerPaneIsOpen = false
-								
-                        end
-                       
-                        if params.Name == "ClosePanes" then
-                                ThisPlayerPaneIsOpen = false
-                                self:diffusealpha(0)
-                        end
-                end
+	--This code has been optimized so the actor that loaded difficulty runs Set on it. Uncomment this to return it to its original form.
+	--[[CurrentSongChangedMessageCommand=cmd(playcommand,"Set"),
+	["CurrentSteps"..ToEnumShortString(player).."ChangedMessageCommand"]=function(self) self:playcommand("Set") end,
+	["CurrentTrail"..ToEnumShortString(player).."ChangedMessageCommand"]=function(self) self:playcommand("Set") end,
+	CurrentCourseChangedMessageCommand=cmd(playcommand,"Set"),]]
+
+} 
+t[#t+1] = LoadActor("DiffFrame.png")..{
+        InitCommand=cmd(vertalign,top; zoom,0.7),
+        OnCommand=function(self)
+                GetDifListX(self, 35)
+                self:y(_screen.cy-220)
         end
- 
 }
- 
-if not GAMESTATE:IsCourseMode() then
- 
-        t[#t+1] = LoadActor("DiffFrame.png")..{
-                InitCommand=cmd(vertalign,top; zoom,0.7),
-                OnCommand=function(self)
-                        GetDifListX(self, 35)
-                        self:y(_screen.cy-220)
-                end,
-                OffCommand=function(self)
-					if player == PLAYER_1 then
-						(cmd(sleep,0.15; linear,0.25; addx,-500))(self);
-					elseif player == PLAYER_2 then
-						(cmd(sleep,0.15; linear,0.25; addx,500))(self);
-					end;
-				end;
-        }
- 
-        local difficulties = {"Beginner", "Easy", "Medium", "Hard", "Challenge", "Edit"}
-       
-        for difficulty in ivalues(difficulties) do
-                t[#t+1] = DrawDifListItem("Difficulty_" .. difficulty);
-        end
- 
-        t[#t+1]=Def.ActorFrame {
-                InitCommand=cmd(y, 157),
-                OffCommand=cmd(zoom,0),
- 
-                -- Cursor
-                Def.Quad{
-                        InitCommand=function(self)
-								self:draworder(1);
-                                GetDifListX(self, 54)
-                                self:zoomto(306, 35)
-                        end,
-                        ["CurrentSteps" .. ToEnumShortString(player) .. "ChangedMessageCommand"]=function(self)
-                                self:diffusealpha(0)
-                                self:finishtweening()
-                                self:diffusealpha(1)
-                               
-                                local song=GAMESTATE:GetCurrentSong()
-                                if song then
- 
-                                        local steps = GAMESTATE:GetCurrentSteps(player)
-                                        if steps then
-												
-                                                local diff = steps:GetDifficulty();
-                                                local st=GAMESTATE:GetCurrentStyle():GetStepsType();
-												self:diffuse(CustomDifficultyToColor(diff));
-                                                self:y( Difficulty:Reverse()[diff] * 42 )
- 
-                                        end
-                                end
-                                end,
-                        SaveCommand=function(self)                             
-                                -- There's no need to make a custom function to interpret
-                                -- StepMania's enums.  The Reverse() method can be applied to any
-                                -- enum to do that for you.  That being said...
-                                --
-                                -- Whatever you're trying to do here, it'll always be nil because
-                                -- your "diff" variable is always nil...
-                                --
-                                -- I would help you more here, but I have no idea what you're attempting.
-                                -- So, to temporarily prevent errors, I'm just going to comment this out.
-                               
-                                -- setenv("SaveDifficulty1P", Difficulty:Reverse()[diff]+1 );
-                        end
-                }
-        }
- 
-        t[#t+1] = LoadActor("DiffTitles.png")..{
-                InitCommand=cmd(vertalign,top; zoom,0.7),
-                OnCommand=function(self)
-                        GetDifListX(self, 35)
-                        self:y(_screen.cy-220)
-                end,
-				OffCommand=function(self)
-					if player == PLAYER_1 then
-						(cmd(sleep,0.15; linear,0.25; addx,-500))(self);
-					elseif player == PLAYER_2 then
-						(cmd(sleep,0.15; linear,0.25; addx,500))(self);
-					end;
-				end;
-        }
+
+local diffItems = Def.ActorFrame{
+	Name="DifficultyItems";
+}
+for difficulty in ivalues(Difficulty) do
+		t[#t+1] = DrawDifListItem(difficulty);
 end
+
+t[#t+1] = diffItems;
+
+t[#t+1]=Def.ActorFrame {
+        InitCommand=cmd(y, 157),
+        OffCommand=cmd(zoom,0),
+
+        -- Cursor
+        Def.Quad{
+                InitCommand=function(self)
+						self:draworder(1);
+                        GetDifListX(self, 54)
+                        self:zoomto(306, 35)
+                end,
+                SetCommand=function(self)
+                        self:diffusealpha(0)
+                        self:finishtweening()
+                        self:diffusealpha(1)
+                       
+                        local song=GAMESTATE:GetCurrentSong()
+                        if song then
+
+                                local steps = GAMESTATE:GetCurrentSteps(player)
+                                if steps then
+										
+                                        local diff = steps:GetDifficulty();
+                                        local st=GAMESTATE:GetCurrentStyle():GetStepsType();
+										self:diffuse(CustomDifficultyToColor(diff));
+                                        self:y( Difficulty:Reverse()[diff] * 42 )
+
+                                end
+                        end
+                        end,
+                SaveCommand=function(self)                             
+                        -- There's no need to make a custom function to interpret
+                        -- StepMania's enums.  The Reverse() method can be applied to any
+                        -- enum to do that for you.  That being said...
+                        --
+                        -- Whatever you're trying to do here, it'll always be nil because
+                        -- your "diff" variable is always nil...
+                        --
+                        -- I would help you more here, but I have no idea what you're attempting.
+                        -- So, to temporarily prevent errors, I'm just going to comment this out.
+                       
+                        -- setenv("SaveDifficulty1P", Difficulty:Reverse()[diff]+1 );
+                end
+        }
+}
+
+t[#t+1] = LoadActor("DiffTitles.png")..{
+        InitCommand=cmd(vertalign,top; zoom,0.7),
+        OnCommand=function(self)
+                GetDifListX(self, 35)
+                self:y(_screen.cy-220)
+        end,
+}
  
 return t

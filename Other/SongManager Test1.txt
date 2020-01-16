@@ -1,0 +1,7 @@
+---Test Group 1
+9V LEGGENDARIA/*
+---Test Group 2
+StepMania 5/*
+---Test Group 3
+StepMania 5/*
+9V LEGGENDARIA/*

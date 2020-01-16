@@ -38,13 +38,45 @@ local xPosPlayerRave = {
 local t = Def.ActorFrame{}
 t[#t+1] = LoadActor("flicker")
 for _, pn in pairs(GAMESTATE:GetEnabledPlayers()) do
-	t[#t+1] = LoadActor(lifeFrame)..{
-		Name = pn,
+	t[#t+1] = Def.ActorFrame{
 		InitCommand=function(self)
 			local short = ToEnumShortString(pn)
 			self:x(xPosPlayer[short])
 		end,
 		OnCommand=function(s) s:zoomx(pn=='PlayerNumber_P2' and -1 or 1) end,
+		Def.Sprite{
+			InitCommand=function(self)
+				--Preload trick so the OS caches the files
+				self:Load(THEME:GetPathG("ScreenGameplay","LifeFrame/gauge_rainbow (stretch).png"))
+				self:Load(THEME:GetPathG("ScreenGameplay","LifeFrame/gauge_normal (stretch).png"))
+				self:x(5);
+			end;
+			--Texture = "gauge_normal (stretch)";
+			BeginCommand=cmd(zoomtowidth,450;);
+			OnCommand=function(self) 
+				self:MaskDest():ztestmode("ZTestMode_WriteOnFail");
+				self:customtexturerect(0,0,1,1) 
+				if pn == PLAYER_1 then 
+					self:texcoordvelocity(-.75,0)
+				else 
+					self:texcoordvelocity(.75,0)
+				end;
+			end;
+			HealthStateChangedMessageCommand=function(self, param)
+				if param.PlayerNumber == pn then
+					if param.HealthState == "HealthState_Danger" then
+						--self:Load(THEME:GetPathB("","ScreenGameplay decorations/danger (stretch).png")) :setsize(672,42)
+					elseif param.HealthState == "HealthState_Hot" then 
+						self:Load(THEME:GetPathG("ScreenGameplay","LifeFrame/gauge_rainbow (stretch).png")) :zoomtowidth(500);
+					else
+						self:Load(THEME:GetPathG("ScreenGameplay","LifeFrame/gauge_normal (stretch).png")) :zoomtowidth(500);
+					end;
+				end;
+			end;
+		};
+		LoadActor(lifeFrame)..{
+			Name = pn,
+		};
 	};
 end;
 

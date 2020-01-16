@@ -1,0 +1,10 @@
+-- Handles version sorts
+SortExtra = function()
+	SONGMAN:SetPreferredSongs("Extra")
+	return "sort,Preferred";
+end
+
+SortBPM = function()
+	SCREENMAN:GetTopScreen():GetChild('MusicWheel'):ChangeSort(3)
+	return "sort,BPM"
+end;

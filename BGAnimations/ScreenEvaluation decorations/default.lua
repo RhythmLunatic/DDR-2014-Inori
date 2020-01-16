@@ -22,6 +22,9 @@ t[#t+1] = LoadActor("LabelP2")..{
 	end;
 end;]]
 
+
+--t[#t+1] = LoadActor("qrcode", PLAYER_1)..{};
+
 -- If single player
 if #GAMESTATE:GetEnabledPlayers() == 1 then
 	--P1 Frame
@@ -44,18 +47,6 @@ else --If multiplayer
 
 end;
 
---[[t[#t+1] = LoadActor("Instructions.png")..{
-		InitCommand=cmd(y,SCREEN_CENTER_Y+160-3-19;x,SCREEN_CENTER_X+330-80-5;visible,GAMESTATE:IsHumanPlayer(PLAYER_1);zoom,0.675);
-		OffCommand=cmd(sleep,0.2;linear,0.2;addx,700);
-		OnCommand=function(self)
-			local style = GAMESTATE:GetCurrentStyle():GetStyleType()
-			if style == "StyleType_TwoPlayersTwoSides" then
-				self:diffusealpha(0);
-			else
-				self:diffusealpha(1);
-			end;
-		end;
-	};]]
 --ScoreLabelP1
 t[#t+1] = LoadActor("Score_Label")..{
 	InitCommand=cmd(diffusealpha,1;draworder,11;x,SCREEN_CENTER_X-320-100-10;y,SCREEN_CENTER_Y-90+5;visible,GAMESTATE:IsHumanPlayer(PLAYER_1);zoom,0.7);
@@ -178,7 +169,7 @@ if ShowStandardDecoration("StepsDisplay") then
 	end
 end
 
-for pn in ivalues(PlayerNumber) do
+--[[for pn in ivalues(PlayerNumber) do
 	local MetricsName = "MachineRecord" .. PlayerNumberToString(pn);
 	t[#t+1] = LoadActor( THEME:GetPathG(Var "LoadingScreen", "MachineRecord"), pn ) .. {
 		InitCommand=function(self)
@@ -240,7 +231,7 @@ for pn in ivalues(PlayerNumber) do
 			end
 		end;
 	};
-end
+end]]
 
 --song title black--
 t[#t+1] = LoadFont("Common Normal")..{

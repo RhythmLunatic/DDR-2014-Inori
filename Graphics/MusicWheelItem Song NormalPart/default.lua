@@ -6,6 +6,8 @@ local group;
 local getOn = 0;
 local getOff = 0;
 
+centerObjectProxy = nil;
+
 --main backing
 local t = Def.ActorFrame {
 	--[[SetCommand=function(self,params)
@@ -37,9 +39,7 @@ local t = Def.ActorFrame {
 		local so = GAMESTATE:GetSortOrder();
 			if group then
 				if group_name[group] then
-					local group_extender1 = group_name[group];
-					local group_extender2 = group_extend[group_extender1];
-					self:Load(THEME:GetPathG("","_jackets/backing/full/"..group_extender2..".png"))
+					self:Load(THEME:GetPathG("","_jackets/backing/full/"..group_name[group][2]..".png"))
 
 					self:diffusealpha(1):setsize(174,210)
 					self:y(-2)
@@ -48,7 +48,7 @@ local t = Def.ActorFrame {
 					local so = GAMESTATE:GetSortOrder();
 					if so == "SortOrder_Title" or so == "SortOrder_Artist" then
 						self:diffuse(color("#fff582"));
-					elseif so == "SortOrder_BeginnerMeter" or so == "SortOrder_EasyMeter" or so == "SortOrder_MediumMeter" or so == "SortOrder_HardMeter" or so == "SortOrder_ChallengeMeter" then
+					elseif so == "SortOrder_AllDifficultyMeter" then
 						self:diffuse(color("#0167ae"));
 					elseif so == "SortOrder_BPM" then
 						self:diffuse(color("#69ebca"));
@@ -153,6 +153,9 @@ Def.Quad {
 			local Song = params.Song;
 			local Course = params.Course;
 			if Song then
+				if params.HasFocus then
+					centerObjectProxy = self;
+				end;
 				if ( Song:GetJacketPath() ~=  nil ) and ( bAllowJackets ) then
 					self:Load( Song:GetJacketPath() );
 					self:playcommand("Jacket");

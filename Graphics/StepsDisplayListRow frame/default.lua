@@ -7,6 +7,8 @@ local DiffToNum = {
 }
 
 local t = Def.ActorFrame{
+	--CurrentStepsP1ChangedMessageCommand
+
 	InitCommand=cmd(draworder,30);
 	Def.Sprite{
 		InitCommand=cmd(visible,true);

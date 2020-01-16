@@ -2,60 +2,10 @@ local t = Def.ActorFrame{};
 t[#t+1] = StandardDecorationFromFileOptional("StageFrame","StageFrame");
 t[#t+1] = StandardDecorationFromFile("LifeFrame","LifeFrame")
 
+
 -- The thing at the bottom
 t[#t+1] = StandardDecorationFromFile("ScoreFrame","ScoreFrame")
 
-local ScoringPlayers = {}
-
-local SecondInfo = {}
-
-local tns_reverse = Enum.Reverse(TapNoteScore)
-
-t[#t+1] = Def.Actor{
-    Name="ScoringController",
-    JudgmentMessageCommand = function(_,params)
-		SN2Scoring.PrepareScoringInfo(false)
-        if not ScoringPlayers[params.Player] then
-            ScoringPlayers[params.Player] = true
-        end
-		--worstJudge is used by the combo code
-		if not ScoringInfo.worstJudge then
-			ScoringInfo.worstJudge = {}
-		end
-		local wj = ScoringInfo.worstJudge[params.Player]
-		if (not wj) or tns_reverse[params.TapNoteScore] < tns_reverse[wj] then
-			ScoringInfo.worstJudge[params.Player] = params.TapNoteScore
-		end
-        local es = (GAMESTATE:Env()).EndlessState
-        if es then
-            local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(params.Player)
-            es.scoring.handleNoteScore(params.HoldNoteScore or params.TapNoteScore,
-                GAMESTATE:GetCurrentStageIndex()+1,
-                pss:GetCurrentCombo())
-            --SCREENMAN:SystemMessage(es.scoring.getScoreString())
-        end
-    end,
-}
-
-local function ScoreUpdate()
-    for pn, _ in pairs(ScoringPlayers) do
-        local info = ScoringInfo[pn]
-        local stage = GAMESTATE:IsCourseMode() and GAMESTATE:GetCourseSongIndex() + 1 or nil
-        local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(pn)
-        local score = info.GetCurrentScore(pss, stage)
-        pss:SetScore(score)
-        local scoreDisplay = SCREENMAN:GetTopScreen():GetChild("Score"..ToEnumShortString(pn))
-        if scoreDisplay and scoreDisplay:GetChild("Text") then
-            scoreDisplay:GetChild("Text"):targetnumber(score)
-        end
-        pss:SetCurMaxScore(info.GetCurrentMaxScore(pss, stage))
-    end
-end
-
-t[#t+1] = Def.ActorFrame{
-    Name = "ScoringController2",
-    InitCommand = function(s) s:SetUpdateFunction(ScoreUpdate) end
-}
 
 local xPosPlayer = {
     P1 = (THEME:GetMetric(Var "LoadingScreen","PlayerP1OnePlayerOneSideX")),

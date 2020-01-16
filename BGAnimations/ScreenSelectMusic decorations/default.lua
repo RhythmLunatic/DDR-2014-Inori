@@ -1,11 +1,12 @@
 local t = LoadFallbackB();
-local args = {...}
+
+--do return t end;
+
 -- the only arg is arg 1, the player number
 local function m(metric)
 	metric = metric:gsub("PN", ToEnumShortString(args[1]))
 	return THEME:GetMetric(Var "LoadingScreen",metric)
 end
-t[#t+1] = StandardDecorationFromFileOptional( "BannerFrame","BannerFrame" );
 
 
 -- Legacy StepMania 4 Function
@@ -31,22 +32,8 @@ local function StepsDisplay(pn)
 end
 
 --default difficulty stuff
-local function GetDifListY(d)
-	local r=0;
-	if d == "Difficulty_Beginner" then
-		r=(42*0);
-	elseif d == "Difficulty_Easy" then
-		r=(42*1);
-	elseif d == "Difficulty_Medium" then
-		r=(42*2);
-	elseif d == "Difficulty_Hard" then
-		r=(42*3);
-	elseif d == "Difficulty_Challenge" then
-		r=(42*4);
-	elseif d == "Difficulty_Edit" then
-		r=(42*5);
-	end;
-	return r;
+local function GetLargeDiffInd(d)
+	return Difficulty:Reverse()[d];
 end;
 
 local function GetDifListX(self,pn,offset,fade)
@@ -65,191 +52,110 @@ local function GetDifListX(self,pn,offset,fade)
 end;
 
 local function DrawDifList(pn,diff)
-	local t=Def.ActorFrame {
-		InitCommand=cmd(player,pn;y,SCREEN_CENTER_Y-150-43.5-25);
---meter
-	LoadFont("_itc avant garde std bk 20px")..{
-		InitCommand=cmd(diffuse,color("#000000");strokecolor,Color("White");zoom,0.9);
-		SetCommand=function(self)
-		local st=GAMESTATE:GetCurrentStyle():GetStepsType();
-		local song=GAMESTATE:GetCurrentSong();
-		local course = GAMESTATE:GetCurrentCourse();
-		if song then
-			GetDifListX(self,pn,110,0);
-			self:y(GetDifListY(diff, st, song));
-			if song:HasStepsTypeAndDifficulty(st,diff) then
-			local steps = song:GetOneSteps( st, diff );
-				self:settext(steps:GetMeter());
-			else
-				self:settext("");
+	return Def.ActorFrame {
+		InitCommand=cmd(y,SCREEN_CENTER_Y-150-43.5-25+42*GetLargeDiffInd(diff));
+		--meter
+		LoadFont("_itc avant garde std bk 20px")..{
+			InitCommand=cmd(diffuse,color("#000000");strokecolor,Color("White");zoom,0.9);
+			SetCommand=function(self)
+			local st=GAMESTATE:GetCurrentStyle():GetStepsType();
+			local song=GAMESTATE:GetCurrentSong();
+			local course = GAMESTATE:GetCurrentCourse();
+			if song then
+				GetDifListX(self,pn,110,0);
+				if song:HasStepsTypeAndDifficulty(st,diff) then
+				local steps = song:GetOneSteps( st, diff );
+					self:settext(steps:GetMeter());
+				else
+					self:settext("");
+				end;
 			end;
-		end;
-		end;
-	CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
-	CurrentStepsP1ChangedMessageCommand=cmd(playcommand,"Set");
-	CurrentStepsP2ChangedMessageCommand=cmd(playcommand,"Set");
-	CurrentTrailP1ChangedMessageCommand=cmd(playcommand,"Set");
-	CurrentTrailP2ChangedMessageCommand=cmd(playcommand,"Set");
-	CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
+			end;
+		CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
+		CurrentStepsP1ChangedMessageCommand=cmd(playcommand,"Set");
+		CurrentStepsP2ChangedMessageCommand=cmd(playcommand,"Set");
+		CurrentTrailP1ChangedMessageCommand=cmd(playcommand,"Set");
+		CurrentTrailP2ChangedMessageCommand=cmd(playcommand,"Set");
+		CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
+		};
 	};
-	};
-	return t;
 end;
+
 if not GAMESTATE:IsCourseMode() then
-t[#t+1] = LoadActor("DiffBlocks.png")..{
-	InitCommand=cmd(player,PLAYER_1;vertalign,top;x,SCREEN_LEFT+14;y,SCREEN_CENTER_Y-160-43-6.5-25;zoom,0.66);
-	OffCommand=cmd(linear,0.25;addx,-500);
-	};
-t[#t+1] = LoadActor("DiffBlocks.png")..{
-	InitCommand=cmd(player,PLAYER_2;vertalign,top;x,SCREEN_RIGHT-14;y,SCREEN_CENTER_Y-160-43-6.5-25;zoom,0.66);
-	OffCommand=cmd(linear,0.25;addx,500);
-	};
-	t[#t+1]=DrawDifList(PLAYER_1,'Difficulty_Beginner')..{
-	OffCommand=cmd(linear,0.25;addx,-500);
-	};
-	t[#t+1]=DrawDifList(PLAYER_1,'Difficulty_Easy')..{
-	OffCommand=cmd(linear,0.25;addx,-500);
-	};
-	t[#t+1]=DrawDifList(PLAYER_1,'Difficulty_Medium')..{
-	OffCommand=cmd(linear,0.25;addx,-500);
-	};
-	t[#t+1]=DrawDifList(PLAYER_1,'Difficulty_Hard')..{
-	OffCommand=cmd(linear,0.25;addx,-500);
-	};
-	t[#t+1]=DrawDifList(PLAYER_1,'Difficulty_Challenge')..{
-	OffCommand=cmd(linear,0.25;addx,-500);
-	};
+	for player in ivalues(GAMESTATE:GetEnabledPlayers()) do
+		t[#t+1] = LoadActor("DiffBlocks.png")..{
+			InitCommand=cmd(vertalign,top;x,(player == PLAYER_1 and 14 or SCREEN_RIGHT-14);y,SCREEN_CENTER_Y-160-43-6.5-25;zoom,0.66);
+			OffCommand=cmd(linear,0.25;addx,-500);
+		};
+	
+		for diff in ivalues(Difficulty) do
+			t[#t+1]=DrawDifList(player,diff)..{
+				OffCommand=function(self)
+					self:linear(0.25);
+					self:addx(player == PLAYER_1 and -500 or 500);
+				end;
+			};
+		end;
+		
+		--default meter stuff
+		t[#t+1] = LoadActor("GRP_"..pname(player))..{
+			InitCommand=cmd(x,(player == PLAYER_1 and 260-15 or SCREEN_RIGHT-260+15);y,SCREEN_CENTER_Y-80;draworder,-1;diffusealpha,0.8;zoom,0.96);
+			OffCommand=cmd(bouncebegin,0.25;zoom,0);
+		};
+		--default radar
+		t[#t+1] = StandardDecorationFromFileOptional( "GrooveRadar"..pname(player).."_Default", "GrooveRadar"..pname(player).."_Default" );
+		
+		--Meterp1
+		t[#t+1] = LoadFont("ScreenSelectMusic difficulty.ini") .. {
+			InitCommand=cmd(x,(player == PLAYER_1 and SCREEN_LEFT+260-15 or SCREEN_RIGHT-260+15);y,SCREEN_CENTER_Y-70;);
+			OffCommand=cmd(bouncebegin,0.25;zoom,0);
+			CurrentSongChangedMessageCommand=cmd(queuecommand,"Set");
+			["CurrentSteps"..pname(player).."ChangedMessageCommand"]=cmd(queuecommand,"Set");
+			SetCommand=function(self)
+				if GAMESTATE:GetCurrentSong() then
+					self:settext(GAMESTATE:GetCurrentSteps(player):GetMeter());
+				else
+					self:settext("");
+				end;
+			end;
+		};
 
-	t[#t+1]=DrawDifList(PLAYER_2,'Difficulty_Beginner')..{
-	OffCommand=cmd(linear,0.25;addx,500);
+		--descriptionP1
+		t[#t+1] = Def.Sprite{
+			Texture = "LargeDiff 1x6.png";
+			InitCommand=cmd(x,(player == PLAYER_1 and 260-15 or SCREEN_RIGHT-260+15);y,SCREEN_CENTER_Y-190-13;pause);
+			OffCommand=cmd(bouncebegin,0.25;zoom,0);
+			CurrentSongChangedMessageCommand=cmd(queuecommand,"Set");
+			["CurrentSteps"..pname(player).."ChangedMessageCommand"]=cmd(queuecommand,"Set");
+			SetCommand=function(self)
+				if GAMESTATE:GetCurrentSong() then
+					self:diffusealpha(1)
+					self:setstate(GetLargeDiffInd(GAMESTATE:GetCurrentSteps(player):GetDifficulty()))
+				else
+					self:diffusealpha(0)
+				end;
+			end;
+		};
+	end;
+end;
+for pn in ivalues(GAMESTATE:GetEnabledPlayers()) do
+	t[#t+1] = LoadActor("Label"..pname(pn))..{
+		InitCommand=cmd(x,(pn == PLAYER_1 and 50 or SCREEN_RIGHT-50);y,SCREEN_CENTER_Y-268-3;);
+		OffCommand=cmd(linear,0.15;addx,(pn==PLAYER_1 and -300 or 300));
 	};
-	t[#t+1]=DrawDifList(PLAYER_2,'Difficulty_Easy')..{
-	OffCommand=cmd(linear,0.25;addx,500);
+	t[#t+1] = LoadActor("Information.png")..{
+		InitCommand=cmd(x,(pn==PLAYER_1 and SCREEN_RIGHT-230 or 230);y,SCREEN_CENTER_Y-90;diffusealpha,0.8;zoom,0.8);
+		OnCommand=function(self)
+			local style = GAMESTATE:GetCurrentStyle():GetStyleType()
+			if style == "StyleType_TwoPlayersTwoSides" then
+				self:diffusealpha(0);
+			end;
+		end;
+		OffCommand=cmd(linear,0.15;diffusealpha,0);
 	};
-	t[#t+1]=DrawDifList(PLAYER_2,'Difficulty_Medium')..{
-	OffCommand=cmd(linear,0.25;addx,500);
-	};
-	t[#t+1]=DrawDifList(PLAYER_2,'Difficulty_Hard')..{
-	OffCommand=cmd(linear,0.25;addx,500);
-	};
-	t[#t+1]=DrawDifList(PLAYER_2,'Difficulty_Challenge')..{
-	OffCommand=cmd(linear,0.25;addx,500);
-	};
---default meter stuff
-t[#t+1] = LoadActor("GRP1")..{
-	InitCommand=cmd(x,SCREEN_LEFT+260-15;y,SCREEN_CENTER_Y-80;player,PLAYER_1;draworder,-1;diffusealpha,0.8;zoom,0.96);
-	OffCommand=cmd(bouncebegin,0.25;zoom,0);
-	};
-t[#t+1] = LoadActor("GRP2")..{
-	InitCommand=cmd(x,SCREEN_RIGHT-260+15;y,SCREEN_CENTER_Y-80;player,PLAYER_2;draworder,-1;diffusealpha,0.8;zoom,0.96);
-	OffCommand=cmd(bouncebegin,0.25;zoom,0);
-	};
---default radar
-t[#t+1] = StandardDecorationFromFileOptional( "GrooveRadarP1_Default", "GrooveRadarP1_Default" );
-t[#t+1] = StandardDecorationFromFileOptional( "GrooveRadarP2_Default", "GrooveRadarP2_Default" );
---Meterp1
-
---
-local function GetLargeDiffInd(d)
-	return Difficulty:Reverse()[d];
 end;
 
-t[#t+1] = LoadFont("ScreenSelectMusic difficulty.ini") .. {
-	InitCommand=cmd(x,SCREEN_LEFT+260-15;y,SCREEN_CENTER_Y-70;player,PLAYER_1);
-	OffCommand=cmd(bouncebegin,0.25;zoom,0);
-	CurrentSongChangedMessageCommand=cmd(queuecommand,"Set");
-	CurrentStepsP1ChangedMessageCommand=cmd(queuecommand,"Set");
-	SetCommand=function(self)
-		local song = GAMESTATE:GetCurrentSong();
-		if song then
-			if GAMESTATE:IsHumanPlayer(PLAYER_1) then
-			local meter = GAMESTATE:GetCurrentSteps(PLAYER_1):GetMeter();
-				self:settext(meter);
-			else
-				self:settext("");
-			end;
-		else
-			self:settext("");
-		end;
-	end;
-};
-
---descriptionP1
-t[#t+1] = Def.Sprite{
-	Texture = "LargeDiff 1x6.png";
-	InitCommand=cmd(x,SCREEN_LEFT+260-15;y,SCREEN_CENTER_Y-190-13;player,PLAYER_1;pause);
-	OffCommand=cmd(bouncebegin,0.25;zoom,0);
-	CurrentSongChangedMessageCommand=cmd(queuecommand,"Set");
-	CurrentStepsP1ChangedMessageCommand=cmd(queuecommand,"Set");
-	SetCommand=function(self)
-		local song = GAMESTATE:GetCurrentSong();
-		if song then
-			if GAMESTATE:IsHumanPlayer(PLAYER_1) then
-			local diff = GAMESTATE:GetCurrentSteps(PLAYER_1):GetDifficulty();
-				self:diffusealpha(1)
-				self:setstate(GetLargeDiffInd(diff))
-				--self:setstate(1);
-			else
-				self:diffusealpha(0)
-			end;
-		else
-			self:diffusealpha(0)
-		end;
-	end;
-};
---Meterp2
-t[#t+1] = LoadFont("ScreenSelectMusic difficulty.ini") .. {
-	InitCommand=cmd(x,SCREEN_RIGHT-260+15;y,SCREEN_CENTER_Y-70;player,PLAYER_2);
-	OffCommand=cmd(bouncebegin,0.25;zoom,0);
-	CurrentSongChangedMessageCommand=cmd(queuecommand,"Set");
-	CurrentStepsP2ChangedMessageCommand=cmd(queuecommand,"Set");
-	SetCommand=function(self)
-		local song = GAMESTATE:GetCurrentSong();
-		if song then
-			if GAMESTATE:IsHumanPlayer(PLAYER_2) then
-			local meter = GAMESTATE:GetCurrentSteps(PLAYER_2):GetMeter();
-				self:settext(meter);
-			else
-				self:settext("");
-			end;
-		else
-			self:settext("");
-		end;
-	end;
-};
-
---descriptionP2
-t[#t+1] = Def.Sprite{
-	Texture = "LargeDiff 1x6.png";
-	InitCommand=cmd(x,SCREEN_RIGHT-260+15;y,SCREEN_CENTER_Y-190-13;player,PLAYER_2;pause);
-	OffCommand=cmd(bouncebegin,0.25;zoom,0);
-	CurrentSongChangedMessageCommand=cmd(queuecommand,"Set");
-	CurrentStepsP2ChangedMessageCommand=cmd(queuecommand,"Set");
-	SetCommand=function(self)
-		local song = GAMESTATE:GetCurrentSong();
-		if song then
-			if GAMESTATE:IsHumanPlayer(PLAYER_2) then
-			local diff = GAMESTATE:GetCurrentSteps(PLAYER_2):GetDifficulty();
-				self:diffusealpha(1)
-				self:setstate(GetLargeDiffInd(diff, st, song))
-			else
-				self:diffusealpha(0)
-			end;
-		else
-			self:diffusealpha(0)
-		end;
-	end;
-};
-end;
-t[#t+1] = LoadActor("LabelP1")..{
-		InitCommand=cmd(x,SCREEN_LEFT+50;y,SCREEN_CENTER_Y-268-3;player,PLAYER_1);
-		OffCommand=cmd(linear,0.15;addx,-300);
-	};
-t[#t+1] = LoadActor("LabelP2")..{
-		InitCommand=cmd(x,SCREEN_RIGHT-50;y,SCREEN_CENTER_Y-268-3;player,PLAYER_2);
-		OffCommand=cmd(linear,0.15;addx,300);
-	};
---arrows--
+--arrows shown on the music wheel--
 t[#t+1] = LoadActor("arrow.png") .. {
 		InitCommand=cmd(draworder,200;x,SCREEN_CENTER_X+90;y,SCREEN_BOTTOM-160);
 		OnCommand=cmd(bounce;effectmagnitude,8,0,0;effectclock,'beatnooffset');
@@ -274,142 +180,16 @@ t[#t+1] = LoadActor("press.png") .. {
 		OnCommand=cmd(bounce;effectmagnitude,-8,0,0;effectclock,'beatnooffset');
 		PreviousSongMessageCommand=cmd(stoptweening;linear,0;diffusealpha,1;decelerate,0.5;diffusealpha,0);
 	};
-t[#t+1] = LoadActor("Information.png")..{
-		InitCommand=cmd(x,SCREEN_RIGHT-230;y,SCREEN_CENTER_Y-90;visible,GAMESTATE:IsHumanPlayer(PLAYER_1);diffusealpha,0.8;zoom,0.8);
-		OnCommand=function(self)
-			local style = GAMESTATE:GetCurrentStyle():GetStyleType()
-			if style == "StyleType_TwoPlayersTwoSides" then
-				self:diffusealpha(0);
-			else
-				self:diffusealpha(0.8);
-			end;
-		end;
-		OffCommand=cmd(linear,0.15;diffusealpha,0);
-	};
-t[#t+1] = LoadActor("Information.png")..{
-		InitCommand=cmd(x,SCREEN_LEFT+230;y,SCREEN_CENTER_Y-90;visible,GAMESTATE:IsHumanPlayer(PLAYER_2);diffusealpha,0.8;zoom,0.8);
-		OnCommand=function(self)
-			local style = GAMESTATE:GetCurrentStyle():GetStyleType()
-			if style == "StyleType_TwoPlayersTwoSides" then
-				self:diffusealpha(0);
-			else
-				self:diffusealpha(0.8);
-			end;
-		end;
-		OffCommand=cmd(linear,0.15;diffusealpha,0);
-	};
+
 if not GAMESTATE:IsCourseMode() then
-t[#t+1] = LoadActor("PaneNumbers")..{
-		InitCommand=cmd(x,SCREEN_LEFT+351-100-12-6-3;y,SCREEN_CENTER_Y-90-164-20+10;diffusealpha,0;zoom,0.85;draworder,2;player,PLAYER_1;animate,false);
-		CodeMessageCommand=function(self,params)
-		local style = GAMESTATE:GetCurrentStyle():GetStyleType()
-		local pn= params.PlayerNumber
-		if pn==PLAYER_1 then
-			if params.Name=="OpenPanes1"then
-				self:diffusealpha(1);
-				self:setstate(0);
-			elseif params.Name=="OpenPanes2"then
-				self:diffusealpha(1);
-				self:setstate(1);
-			elseif params.Name=="OpenPanes3"then
-				self:diffusealpha(1);
-				self:setstate(2);
-			elseif params.Name=="ClosePanes"then
-				self:diffusealpha(0);
-			end;
-		end;
-	end;
-	OffCommand=cmd(sleep,0.15;linear,0.25;addx,-500);
-};
-t[#t+1] = LoadActor("PaneNumbers")..{
-		InitCommand=cmd(x,SCREEN_RIGHT-351+100+12+6-60-40+2;y,SCREEN_CENTER_Y-90-164-20+10;diffusealpha,0;zoom,0.85;draworder,2;player,PLAYER_2;animate,false);
-		CodeMessageCommand=function(self,params)
-		local style = GAMESTATE:GetCurrentStyle():GetStyleType()
-		local pn= params.PlayerNumber
-		if pn==PLAYER_2 then
-			if params.Name=="OpenPanes1"then
-				self:diffusealpha(1);
-				self:setstate(0);
-			elseif params.Name=="OpenPanes2"then
-				self:diffusealpha(1);
-				self:setstate(1);
-			elseif params.Name=="OpenPanes3"then
-				self:diffusealpha(1);
-				self:setstate(2);
-			elseif params.Name=="ClosePanes"then
-				self:diffusealpha(0);
-			end;
-		end;
-	end;
-	OffCommand=cmd(sleep,0.15;linear,0.25;addx,500);
-};
-t[#t+1] = LoadActor("PaneFrameBase 3x1")..{
-		InitCommand=cmd(x,SCREEN_LEFT-250;y,SCREEN_CENTER_Y-90-15-4;diffusealpha,0;zoomx,0.8;zoomy,0.7;draworder,2;player,PLAYER_1;animate,false);
-		CodeMessageCommand=function(self,params)
-		local style = GAMESTATE:GetCurrentStyle();
-		local pn= params.PlayerNumber
-		if pn==PLAYER_1 then
-			if params.Name=="OpenPanes1"then
-				self:diffusealpha(1);
-				self:setstate(0);
-				self:linear(0.15);
-				self:x(SCREEN_LEFT+190-38);
-			elseif params.Name=="OpenPanes2"then
-				self:diffusealpha(1);
-				self:setstate(1);
-				self:linear(0.15);
-				self:x(SCREEN_LEFT+190-38);
-			elseif params.Name=="OpenPanes3"then
-				self:diffusealpha(1);
-				self:setstate(2);
-				self:linear(0.15);
-				self:x(SCREEN_LEFT+190-38);
-			elseif params.Name=="ClosePanes"then
-				self:linear(0.15);
-				self:x(SCREEN_LEFT-250);
-			end;
-		end;
-	end;
-	OffCommand=cmd(sleep,0.15;linear,0.25;addx,-500);
-};
-t[#t+1] = LoadActor("PaneFrameBase 3x1")..{
-		InitCommand=cmd(x,SCREEN_RIGHT+250;y,SCREEN_CENTER_Y-90-15-4;diffusealpha,0;zoomx,0.8;zoomy,0.7;draworder,2;player,PLAYER_2;rotationy,180;animate,false);
-		CodeMessageCommand=function(self,params)
-		local style = GAMESTATE:GetCurrentStyle();
-		local pn= params.PlayerNumber
-		if pn==PLAYER_2 then
-			if params.Name=="OpenPanes1"then
-				self:diffusealpha(1);
-				self:setstate(0);
-				self:linear(0.15);
-				self:x(SCREEN_RIGHT-190+38);
-			elseif params.Name=="OpenPanes2"then
-				self:diffusealpha(1);
-				self:setstate(1);
-				self:linear(0.15);
-				self:x(SCREEN_RIGHT-190+38);
-			elseif params.Name=="OpenPanes3"then
-				self:diffusealpha(1);
-				self:setstate(2);
-				self:linear(0.15);
-				self:x(SCREEN_RIGHT-190+38);
-			elseif params.Name=="ClosePanes"then
-				self:linear(0.15);
-				self:x(SCREEN_RIGHT+250);
-			end;
-		end;
-	end;
-	OffCommand=cmd(sleep,0.15;linear,0.25;addx,500);
-};
+
+
+
 end;
 --Sound
 t[#t+1] = LoadActor( THEME:GetPathS("","Pane Sound" ) ) .. {
-		CodeMessageCommand=function(self,params)
-		if params.Name=="OpenPanes1"then
-			self:play();
-		elseif params.Name=="OpenPanes2"then
-			self:play();
-		elseif params.Name=="OpenPanes3"then
+	CodeMessageCommand=function(self,params)
+		if params.Name=="OpenPanes1" or params.Name=="OpenPanes2" or params.Name=="OpenPanes3"then
 			self:play();
 		elseif params.Name=="ClosePanes"then
 			self:stop();
@@ -418,7 +198,7 @@ t[#t+1] = LoadActor( THEME:GetPathS("","Pane Sound" ) ) .. {
 };
 --for course mode
 if GAMESTATE:IsCourseMode() then
-t[#t+1] = LoadActor("Course_PaneNumbers")..{
+	t[#t+1] = LoadActor("Course_PaneNumbers")..{
 		InitCommand=cmd(x,SCREEN_LEFT+351-100-12-6-3;y,SCREEN_CENTER_Y-90-164-20+10;diffusealpha,1;zoom,0.85;draworder,2;player,PLAYER_1;animate,false);
 		CodeMessageCommand=function(self,params)
 		local style = GAMESTATE:GetCurrentStyle():GetStyleType()
@@ -436,8 +216,8 @@ t[#t+1] = LoadActor("Course_PaneNumbers")..{
 		end;
 	end;
 	OffCommand=cmd(sleep,0.15;linear,0.25;addx,-500);
-};
-t[#t+1] = LoadActor("Course_PaneNumbers")..{
+	};
+	t[#t+1] = LoadActor("Course_PaneNumbers")..{
 		InitCommand=cmd(x,SCREEN_RIGHT-351+100+12+6-60-40+2;y,SCREEN_CENTER_Y-90-164-20+10;diffusealpha,1;zoom,0.85;draworder,2;player,PLAYER_2;animate,false);
 		CodeMessageCommand=function(self,params)
 		local style = GAMESTATE:GetCurrentStyle():GetStyleType()
@@ -455,8 +235,8 @@ t[#t+1] = LoadActor("Course_PaneNumbers")..{
 		end;
 	end;
 	OffCommand=cmd(sleep,0.15;linear,0.25;addx,500);
-};
-t[#t+1] = LoadActor("PaneFrameBase 3x1")..{
+	};
+	t[#t+1] = LoadActor("PaneFrameBase 3x1")..{
 		InitCommand=cmd(x,SCREEN_LEFT+190-38;y,SCREEN_CENTER_Y-90-15-4;diffusealpha,1;zoomx,0.8;zoomy,0.7;draworder,2;player,PLAYER_1;animate,false);
 		CodeMessageCommand=function(self,params)
 		local style = GAMESTATE:GetCurrentStyle();
@@ -476,119 +256,121 @@ t[#t+1] = LoadActor("PaneFrameBase 3x1")..{
 		end;
 	end;
 	OffCommand=cmd(sleep,0.15;linear,0.25;addx,-500);
-};
-t[#t+1] = LoadActor("PaneFrameBase 3x1")..{
+	};
+	t[#t+1] = LoadActor("PaneFrameBase 3x1")..{
 		InitCommand=cmd(x,SCREEN_RIGHT-190+38;y,SCREEN_CENTER_Y-90-15-4;diffusealpha,1;zoomx,0.8;zoomy,0.7;draworder,2;player,PLAYER_2;rotationy,180;animate,false);
 		CodeMessageCommand=function(self,params)
-		local style = GAMESTATE:GetCurrentStyle();
-		local pn= params.PlayerNumber
-		if pn==PLAYER_2 then
-			if params.Name=="OpenPanes1"then
-				self:diffusealpha(1);
-				self:setstate(0);
-				self:linear(0.15);
-				self:x(SCREEN_RIGHT-190+38);
-			elseif params.Name=="OpenPanes3"then
-				self:diffusealpha(1);
-				self:setstate(2);
-				self:linear(0.15);
-				self:x(SCREEN_RIGHT-190+38);
+			local style = GAMESTATE:GetCurrentStyle();
+			local pn= params.PlayerNumber
+			if pn==PLAYER_2 then
+				if params.Name=="OpenPanes1"then
+					self:diffusealpha(1);
+					self:setstate(0);
+					self:linear(0.15);
+					self:x(SCREEN_RIGHT-190+38);
+				elseif params.Name=="OpenPanes3"then
+					self:diffusealpha(1);
+					self:setstate(2);
+					self:linear(0.15);
+					self:x(SCREEN_RIGHT-190+38);
+				end;
 			end;
 		end;
-	end;
-	OffCommand=cmd(sleep,0.15;linear,0.25;addx,500);
-};
+		OffCommand=cmd(sleep,0.15;linear,0.25;addx,500);
+	};
 end;
+
 if not GAMESTATE:IsCourseMode() then
---Codes
-t[#t+1] = LoadActor("radarP1")..{
-		InitCommand=cmd(diffusealpha,0;draworder,3;addy,-23);
-		CurrentSongChangedMessageCommand=function(self)
-		local song = GAMESTATE:GetCurrentSong()
-			if song then
-				self:zoom(1.1);
-			else
-				self:zoom(1.1);
+	--Panes
+	for pn in ivalues( GAMESTATE:GetHumanPlayers() ) do
+		local currentPane = nil;
+		t[#t+1] = Def.ActorFrame{
+			OffCommand=cmd(sleep,0.15;linear,0.25;addx,(pn == PLAYER_1 and -500 or 500));
+			InitCommand=cmd(x,(pn == PLAYER_1 and -500 or 500));
+			StartSelectingStepsMessageCommand=cmd(playcommand,"Off");
+			CodeMessageCommand=function(self,params)
+				if params.PlayerNumber ~= pn then return end;
+				if params.Name == "OpenPanes1" then
+					currentPane = 0
+				elseif params.Name == "OpenPanes2" then
+					currentPane = 1
+				elseif params.Name == "OpenPanes3" then
+					currentPane = 2
+				elseif params.Name == "ClosePanes" then
+					self:linear(.15):x(pn == PLAYER_1 and -500 or 500);
+					currentPane = nil;
+					return
+				end;
+				self:linear(.15):x(pn == PLAYER_1 and SCREEN_LEFT or 0);
+				self:GetChild("PaneBG"):setstate(currentPane);
+				self:GetChild("PaneNumbers"):setstate(currentPane);
+				
+				self:GetChild("Difficulty"):visible(currentPane==0);
+				self:GetChild("Radar"):visible(currentPane==1);
+				self:GetChild("Scores"):visible(currentPane==2);
+				self:playcommand("Set2");
 			end;
-		end;
-		CodeMessageCommand=function(self,params)
-		if params.PlayerNumber==PLAYER_1 then
-			if params.Name=="OpenPanes2"then
-				self:diffusealpha(1);
-			else
-				self:diffusealpha(0);
+			--Only update the opened pane, because these panes are lagtastic
+			CurrentSongChangedMessageCommand=function(self) self:playcommand("Set2") end,
+			["CurrentSteps"..ToEnumShortString(pn).."ChangedMessageCommand"]=function(self) self:playcommand("Set2") end,
+			["CurrentTrail"..ToEnumShortString(pn).."ChangedMessageCommand"]=function(self) self:playcommand("Set2") end,
+			CurrentCourseChangedMessageCommand=function(self) self:playcommand("Set2") end,
+			Set2Command=function(self)
+				if currentPane==0 then
+					self:GetChild("Difficulty"):playcommand("Set");
+				elseif currentPane==1 then
+				
+				elseif currentPane==2 then
+					self:GetChild("Scores"):playcommand("Set");
+				end;
 			end;
-		end;
-	end;
-};
-t[#t+1] = LoadActor("radarP2")..{
-		InitCommand=cmd(diffusealpha,0;draworder,3;addy,-23);
-		CurrentSongChangedMessageCommand=function(self)
-		local song = GAMESTATE:GetCurrentSong()
-			if song then
-				self:zoom(1.1);
-			else
-				self:zoom(1.1);
-			end;
-		end;
-		CodeMessageCommand=function(self,params)
-		if params.PlayerNumber==PLAYER_2 then
-			if params.Name=="OpenPanes2"then
-				self:diffusealpha(1);
-			else
-				self:diffusealpha(0);
-			end;
-		end;
-	end;
-};
-for pn in ivalues( GAMESTATE:GetHumanPlayers() ) do
-t[#t+1] = LoadActor("Difficulty.lua", pn)..{
-InitCommand=cmd(diffusealpha,0; draworder,3; addy,-19),
-}
-end
+			
+			--The pane background
+			LoadActor("PaneFrameBase 3x1")..{
+				Name="PaneBG";
+				InitCommand=function(self)
+					self:xy(pn == PLAYER_1 and SCREEN_LEFT+150 or SCREEN_RIGHT-150,SCREEN_CENTER_Y-90-15-4);
+					self:zoomx(pn == PLAYER_1 and 0.8 or -0.8);
+					self:zoomy(0.7):animate(false);
+				end;
+			};
+			
+			LoadActor("PaneNumbers")..{
+				Name="PaneNumbers";
+				InitCommand=cmd(x,(pn == PLAYER_1 and SCREEN_LEFT+351-100-12-6-3 or SCREEN_RIGHT-351+100+12+6+3);y,SCREEN_CENTER_Y-90-164-20+10;zoom,0.85;draworder,2;animate,false);
+			};
+			
+			--The difficulty listing on tab 1
+			LoadActor("Difficulty.lua", pn)..{
+				Name="Difficulty";
+				InitCommand=cmd(visible,false;draworder,3; addy,-19),
+			};
+			--The radar on tab 2
+			Def.ActorFrame{
+				Name="Radar";
+				StandardDecorationFromFileOptional( "GrooveRadar"..pname(pn).."_Pane", "GrooveRadar"..pname(pn).."_Pane" );
+				StandardDecorationFromFileOptional("PaneDisplayText"..pname(pn),"PaneDisplayText"..pname(pn));
+				InitCommand=cmd(visible,false;draworder,3;addy,-23);
+				LoadActor("PaneRadar")..{
+					InitCommand=cmd(x,(pn == PLAYER_1 and SCREEN_LEFT+175 or SCREEN_RIGHT-175);y,SCREEN_CENTER_Y-118+12;zoom,0.9);
+				};
+			};
+			
+			--The scores on tab 3
+			LoadActor("scores",pn)..{
+				Name="Scores";
+				InitCommand=function(self)
+					(cmd(visible,false;draworder,3;y,SCREEN_CENTER_Y-160-30;addx,5))(self);
+					if pn == PLAYER_1 then 
+						self:x(SCREEN_LEFT+175);
+					else
+						self:x(SCREEN_RIGHT-175);
+					end;
+				end;
+			};
+		};
+	end
 end;
-t[#t+1] = LoadActor("scoresP1")..{
-		InitCommand=cmd(diffusealpha,0;draworder,3;addy,-30;addx,5);
-		CurrentSongChangedMessageCommand=function(self)
-		local song = GAMESTATE:GetCurrentSong()
-			if song then
-				self:zoom(1);
-			else
-				self:zoom(1);
-			end;
-		end;
-		CodeMessageCommand=function(self,params)
-		local pn = params.PlayerNumber
-		if pn==PLAYER_1 then
-			if params.Name=="OpenPanes3"then
-				self:diffusealpha(1);
-			else
-				self:diffusealpha(0);
-			end;
-		end;
-	end;
-};
-t[#t+1] = LoadActor("scoresP2")..{
-		InitCommand=cmd(diffusealpha,0;draworder,3;addy,-30;addx,-5);
-		CurrentSongChangedMessageCommand=function(self)
-		local song = GAMESTATE:GetCurrentSong()
-			if song then
-				self:zoom(1);
-			else
-				self:zoom(1);
-			end;
-		end;
-		CodeMessageCommand=function(self,params)
-		local pn = params.PlayerNumber
-		if pn==PLAYER_2 then
-			if params.Name=="OpenPanes3"then
-				self:diffusealpha(1);
-			else
-				self:diffusealpha(0);
-			end;
-		end;
-	end;
-};
 t[#t+1] = StandardDecorationFromFileOptional("BPMDisplay","BPMDisplay");
 t[#t+1] = StandardDecorationFromFileOptional("BPMLabel","BPMLabel");
 t[#t+1] = StandardDecorationFromFileOptional("SegmentDisplay","SegmentDisplay");
@@ -604,7 +386,7 @@ if not GAMESTATE:IsCourseMode() then
 		CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
 		SetCommand=function(self)
 	-- 		local pTargetProfile;
-			local sSong;
+			--local sSong;
 			-- Start!
 			if GAMESTATE:GetCurrentSong() then
 				if PROFILEMAN:IsSongNew(GAMESTATE:GetCurrentSong()) then
@@ -622,15 +404,7 @@ end;
 
 
 t[#t+1] = StandardDecorationFromFileOptional("DifficultyDisplay","DifficultyDisplay");
-t[#t+1] = StandardDecorationFromFileOptional("SortOrderFrame","SortOrderFrame") .. {
---[[ 	BeginCommand=cmd(playcommand,"Set");
-	SortOrderChangedMessageCommand=cmd(playcommand,"Set";);
-	SetCommand=function(self)
-		local s = SortOrderToLocalizedString( GAMESTATE:GetSortOrder() );
-		self:settext( s );
-		self:playcommand("Sort");
-	end; --]]
-};
+t[#t+1] = StandardDecorationFromFileOptional("SortOrderFrame","SortOrderFrame") .. {};
 t[#t+1] = StandardDecorationFromFileOptional("SortOrder","SortOrderText") .. {
 	BeginCommand=cmd(playcommand,"Set");
 	SortOrderChangedMessageCommand=cmd(playcommand,"Set";);
@@ -650,26 +424,30 @@ t[#t+1] = StandardDecorationFromFileOptional("SongOptions","SongOptionsText") ..
 	ShowEnteringOptionsCommand=THEME:GetMetric(Var "LoadingScreen","SongOptionsEnterCommand");
 	HidePressStartForOptionsCommand=THEME:GetMetric(Var "LoadingScreen","SongOptionsHideCommand");
 };
---gradient--
+--gradient (on the left)--
 t[#t+1] = Def.Quad{
 	InitCommand=cmd(horizalign,left;x,SCREEN_LEFT+100-50;y,SCREEN_BOTTOM-255-25;setsize,170,26;faderight,1);
 	OnCommand=cmd(addx,-300;linear,0.15;addx,300);
 	OffCommand=cmd(linear,0.15;addx,-300);
 	CurrentSongChangedMessageCommand=function(self)
-	local song = GAMESTATE:GetCurrentSong();
-	local group;
-	local so = GAMESTATE:GetSortOrder();
-	if not GAMESTATE:IsCourseMode() then
-		if song then
+		local song = GAMESTATE:GetCurrentSong();
+		local group;
+		local so = GAMESTATE:GetSortOrder();
+		if not GAMESTATE:IsCourseMode() and song then
 			if so == "SortOrder_Group" then
-				self:diffuse(color("#195c64"));
+				local group = song:GetGroupName()
+				if group_name[group] then
+					self:diffuse(color(group_name[group][4]));
+				else
+					self:diffuse(color("#195c64"));
+				end;
 			elseif so == "SortOrder_Title" then
 				self:diffuse(color("#f98b2d"));
 			elseif so == "SortOrder_Artist" then
 				self:diffuse(color("#f98b2d"));
 			elseif so == "SortOrder_BPM" then
 				self:diffuse(color("#2ed1b4"));
-			elseif so == "SortOrder_BeginnerMeter" or so == "SortOrder_EasyMeter" or so == "SortOrder_MediumMeter" or so == "SortOrder_HardMeter" or so == "SortOrder_ChallengeMeter" then
+			elseif so == "SortOrder_AllDifficultyMeter" then
 				self:diffuse(color("#2d56d1"));
 			elseif so == "SortOrder_Popularity" then
 				self:diffuse(color("#be32f9"));
@@ -677,92 +455,52 @@ t[#t+1] = Def.Quad{
 				self:diffuse(color("#7bd128"));
 			elseif so == "SortOrder_Genre" then
 				self:diffuse(color("#008392"));
-			else
+			--else
 			end;
+		else
+			self:diffusealpha(0);
 		end;
-	else
-		self:diffusealpha(0);
-	end;
 	end;
 	};
---group title--
+--group title (on the left)--
 t[#t+1] = LoadFont("Common Normal")..{
-	InitCommand=cmd(horizalign,left;x,SCREEN_LEFT+100-45;y,SCREEN_BOTTOM-255-25;zoom,0.8;diffuse,color("#ffffff");draworder,1);
+	InitCommand=cmd(horizalign,left;x,SCREEN_LEFT+100-45;y,SCREEN_BOTTOM-255-25;zoom,0.8;diffuse,color("#ffffff"););
 	OnCommand=cmd(addx,-300;linear,0.15;addx,300);
 	OffCommand=cmd(linear,0.15;addx,-300);
 	CurrentSongChangedMessageCommand=function(self)
 	local song = GAMESTATE:GetCurrentSong();
-	local group;
 	local so = GAMESTATE:GetSortOrder();
-	local group_colors= {
-		["SortOrder_Group"]= "#195c64",
-		["SortOrder_Title"]= "#864b21",
-		["SortOrder_Artist"]= "#864b21",
-		["SortOrder_BPM"]= "#006a56",
-		["SortOrder_BeginnerMeter"]= "#1e1e68",
-		["SortOrder_EasyMeter"]= "#1e1e68",
-		["SortOrder_MediumMeter"]= "#1e1e68",
-		["SortOrder_HardMeter"]= "#1e1e68",
-		["SortOrder_ChallengeMeter"]= "#1e1e68",
-		["SortOrder_Popularity"]= "#2e0d54",
-		["SortOrder_TopGrades"]= "#254f07",
-		["SortOrder_Genre"]= "#015b61",
-	}
+
 	if song then
-		local color_str= group_colors[GAMESTATE:GetSortOrder()] or "#000000"
-		self:maxwidth(300);
-		self:strokecolor(color(color_str));
 		if so == "SortOrder_Group" then
-			if song:GetGroupName() == "DanceDanceRevolution 1stMIX" then
-				self:settext("Version/DDR 1st")
-				self:diffusealpha(1);
-			elseif song:GetGroupName() == "DanceDanceRevolution 2ndMIX" then
-				self:settext("Version/2ndMIX ")
-				self:diffusealpha(1);
-			elseif song:GetGroupName() == "DanceDanceRevolution 3rdMIX + VER.Korea" or song:GetGroupName() == "DanceDanceRevolution 3rdMIX" then
-				self:settext("Version/3rdMIX ")
-				self:diffusealpha(1);
-			elseif song:GetGroupName() == "DanceDanceRevolution 4thMIX" then
-				self:settext("Version/4thMIX ")
-				self:diffusealpha(1);
-			elseif song:GetGroupName() == "DanceDanceRevolution 5thMIX" then
-				self:settext("Version/5thMIX ")
-				self:diffusealpha(1);
-			elseif song:GetGroupName() == "DanceDanceRevolution 6thMIX MAX" then
-				self:settext("Version/MAX ")
-				self:diffusealpha(1);
-			elseif song:GetGroupName() == "DanceDanceRevolution 7thMIX MAX2" then
-				self:settext("Version/MAX2 ")
-				self:diffusealpha(1);
-			elseif song:GetGroupName() == "DanceDanceRevolution 8thMIX EXTREME" then
-				self:settext("Version/EXTREME ")
-				self:diffusealpha(1);
-			elseif song:GetGroupName() == "DanceDanceRevolution SuperNOVA" then
-				self:settext("Version/SuperNOVA ")
-				self:diffusealpha(1);
-			elseif song:GetGroupName() == "DanceDanceRevolution SuperNOVA2" then
-				self:settext("Version/SuperNOVA2 ")
-				self:diffusealpha(1);
-			elseif song:GetGroupName() == "DanceDanceRevolution X" then
-				self:settext("Version/X ")
-				self:diffusealpha(1);
-			elseif song:GetGroupName() == "DanceDanceRevolution X2" then
-				self:settext("Version/X2 ")
-				self:diffusealpha(1);
-			elseif song:GetGroupName() == "DanceDanceRevolution X3" or song:GetGroupName() == "DanceDanceRevolution X3 VS 2ndMIX" then
-				self:settext("Version/X3 vs 2ndMIX ")
-				self:diffusealpha(1);
-			elseif song:GetGroupName() == "DDR 2013" then
-				self:settext("Version/DDR 2013 ")
-				self:diffusealpha(1);
-			elseif song:GetGroupName() == "DDR 2014" then
-				self:settext("Version/DDR ")
-				self:diffusealpha(1);
+			local group = song:GetGroupName()
+			if group_name[group] then
+				self:strokecolor(ColorDarkTone(color(group_name[group][4])));
+				self:settext(group_name[group][3]);
 			else
-				self:settext("Version/"..song:GetGroupName());
-				self:diffusealpha(1);
-			end
-		elseif so == "SortOrder_Title" then
+				self:strokecolor(color("#195c64"))
+				self:settext("Version/"..string.gsub(song:GetGroupName(),"^%d%d? ?%- ?", ""));
+			end;
+			self:diffusealpha(1);
+			return;
+		end;
+		
+		local group_colors= {
+			["SortOrder_Title"]= "#864b21",
+			["SortOrder_Artist"]= "#864b21",
+			["SortOrder_BPM"]= "#006a56",
+			["SortOrder_BeginnerMeter"]= "#1e1e68",
+			["SortOrder_EasyMeter"]= "#1e1e68",
+			["SortOrder_MediumMeter"]= "#1e1e68",
+			["SortOrder_HardMeter"]= "#1e1e68",
+			["SortOrder_ChallengeMeter"]= "#1e1e68",
+			["SortOrder_Popularity"]= "#2e0d54",
+			["SortOrder_TopGrades"]= "#254f07",
+			["SortOrder_Genre"]= "#015b61",
+		}
+		local color_str= group_colors[GAMESTATE:GetSortOrder()] or "#000000"
+		self:strokecolor(color(color_str));
+		if so == "SortOrder_Title" then
 				self:settext("Song Title/");
 		elseif so == "SortOrder_Artist" then
 				self:settext("Artist/");
@@ -790,6 +528,74 @@ t[#t+1] = LoadFont("Common Normal")..{
 		end
 	end;
 };
+
+--SONG & GROUP LARGE JACKET
+local musicWheel;
+t[#t+1] = Def.ActorFrame{
+ 	InitCommand=cmd(CenterX;y,SCREEN_CENTER_Y-110-5-15-8;diffusealpha,1;draworder,1);
+	OnCommand=function(self)
+		musicWheel = SCREENMAN:GetTopScreen():GetChild('MusicWheel');
+	end;
+	OffCommand=cmd(sleep,0.2;bouncebegin,0.175;zoomy,0);
+	
+	
+	Def.Quad{
+		InitCommand=cmd(diffuse,color("#000000");setsize,310,310);
+	};
+	--This is the one that shows song jackets
+	Def.ActorProxy{
+		InitCommand=cmd(zoom,2.37);
+		SetCommand=function(self)
+			if centerObjectProxy then
+				self:SetTarget(centerObjectProxy)
+			end;
+			self:visible(GAMESTATE:GetCurrentSong() ~= nil)
+		end;
+		CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
+	};
+
+	--This is the one that shows group jackets
+	Def.Banner {
+		InitCommand=cmd(scaletoclipped,304,304);
+		SetCommand=function(self,params)
+			local song = GAMESTATE:GetCurrentSong();
+			if song or GAMESTATE:IsCourseMode() or not musicWheel then 
+				self:visible(false);
+				return
+			end;
+			self:visible(true);
+			if musicWheel:GetSelectedType() == 'WheelItemDataType_Sort' then
+				self:Load(THEME:GetPathG("","_jackets/"..getenv("getgroupname")));
+				
+			elseif musicWheel:GetSelectedType() == 'WheelItemDataType_Section' then
+				local so = GAMESTATE:GetSortOrder()
+				if so == "SortOrder_Group" then
+					local group = musicWheel:GetSelectedSection();
+					--local group = getenv("getgroupname")
+					local g = GetSongGroupJacketPath(group)
+					if g then
+						self:Load(g)
+					else
+						self:LoadFromSongGroup(group);
+					end;
+					self:scaletoclipped(304,304);
+				else
+					self:Load(THEME:GetPathG("","_jackets/"..THEME:GetString("MusicWheel",ToEnumShortString(so).."Text")))
+				end;
+			end;
+				
+	  end;
+	  CurrentSongChangedMessageCommand=function(self, params)
+		self:playcommand("Set", params);
+	  end;
+  };
+}
+
+
+
+
+
+
 --[[--song title black--
 t[#t+1] = LoadFont("Common Normal")..{
 	InitCommand=cmd(horizalign,center;x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y+70;zoom,1;diffuse,color("#000000");strokecolor,color("#ffffff"));
@@ -846,37 +652,11 @@ local ut = Def.ActorFrame{
 		Name="songTitle";
 		InitCommand=cmd(horizalign,center;x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y+70-30;zoom,1;diffuse,color("#000000");strokecolor,color("#ffffff"));
 		OffCommand=cmd(decelerate,0.05;addy,900);
-		SetCommand=function(self)
-			local song;
-			local tit="";
-			if GAMESTATE:IsCourseMode() then
-				song=GAMESTATE:GetCurrentCourse();
-				tit=song:GetDisplayFullTitle();
-
-			else
-				song=GAMESTATE:GetCurrentSong();
-				tit=song:GetDisplayMainTitle();
-			end;
-			self:maxwidth(400);
-			self:settextf("%s",tit);
-		end;
 	};
 	LoadFont("Common Normal")..{
 		Name="songArtist";
 		InitCommand=cmd(horizalign,center;x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y+90-30;zoom,0.8;diffuse,color("#000000");strokecolor,color("#ffffff");draworder,2);
 		OffCommand=cmd(decelerate,0.05;addy,900);
-		SetCommand=function(self)
-			local song;
-			local sub="";
-			local art="";
-			if GAMESTATE:IsCourseMode() then
-			else
-				song=GAMESTATE:GetCurrentSong();
-				sub=song:GetDisplaySubTitle();
-				art=song:GetDisplayArtist();
-				self:settextf("%s\n%s",sub,art);
-			end;
-		end;
 	};
 };
 
@@ -912,7 +692,15 @@ local function updateTitle(self)
 		upArt:diffuse(color("0.15,0.15,0.15,1"));
 		upArt:strokecolor(Color("White"));
 	else
-		upTit:settext("");
+		if musicWheel:GetSelectedType() == 'WheelItemDataType_Sort' then
+			upTit:settext(getenv("getgroupname") or "nil?");
+		else
+			if GAMESTATE:GetSortOrder() == "SortOrder_Group" then
+				upTit:settext(musicWheel:GetSelectedSection() or "");
+			else
+				upTit:settext("Music Sort "..musicWheel:GetSelectedSection() or "");
+			end;
+		end;
 		upArt:settext("");
 	end;
 end;
@@ -943,36 +731,36 @@ t[#t+1] = LoadActor("Tip_Song")..{
 	};
 
 if GAMESTATE:IsCourseMode() then
-t[#t+1] = StandardDecorationFromFileOptional("CourseContentsListP1","CourseContentsListP1")..{
+	t[#t+1] = StandardDecorationFromFileOptional("CourseContentsListP1","CourseContentsListP1")..{
 		InitCommand=cmd(diffusealpha,1;visible,GAMESTATE:IsHumanPlayer(PLAYER_1);draworder,101;zoom,0.8;addy,90);
 		CodeMessageCommand=function(self,params)
 		local pn = params.PlayerNumber
-		if pn==PLAYER_1 then
-			if params.Name=="OpenPanes1"then
-				self:diffusealpha(1);
-			elseif params.Name=="OpenPanes2"then
-				self:diffusealpha(1);
-			else
-				self:diffusealpha(0);
+			if pn==PLAYER_1 then
+				if params.Name=="OpenPanes1"then
+					self:diffusealpha(1);
+				elseif params.Name=="OpenPanes2"then
+					self:diffusealpha(1);
+				else
+					self:diffusealpha(0);
+				end;
 			end;
 		end;
-	end;
-};
-t[#t+1] = StandardDecorationFromFileOptional("CourseContentsListP2","CourseContentsListP2")..{
+	};
+	t[#t+1] = StandardDecorationFromFileOptional("CourseContentsListP2","CourseContentsListP2")..{
 		InitCommand=cmd(diffusealpha,1;visible,GAMESTATE:IsHumanPlayer(PLAYER_2);draworder,101;zoom,0.8;addy,90);
 		CodeMessageCommand=function(self,params)
-		local pn = params.PlayerNumber
-		if pn==PLAYER_2 then
-			if params.Name=="OpenPanes1"then
-				self:diffusealpha(1);
-			elseif params.Name=="OpenPanes2"then
-				self:diffusealpha(1);
-			else
-				self:diffusealpha(0);
+			local pn = params.PlayerNumber
+			if pn==PLAYER_2 then
+				if params.Name=="OpenPanes1"then
+					self:diffusealpha(1);
+				elseif params.Name=="OpenPanes2"then
+					self:diffusealpha(1);
+				else
+					self:diffusealpha(0);
+				end;
 			end;
 		end;
-	end;
-};
+	};
 end;
 --grades
 t[#t+1] = Def.ActorFrame {
@@ -1118,20 +906,237 @@ InitCommand=cmd(addy,-110);
 	};
 };]]
 
-
-t[#t+1] = Def.ActorFrame{
-	StartSelectingStepsMessageCommand=cmd(finishtweening;linear,0.2;addx,500);
-	SongUnchosenMessageCommand=cmd(finishtweening;linear,0.3;addx,-500);
-	OnCommand=cmd(addx,-500);
-	OffCommand=cmd(finishtweening;linear,0.3;addx,-500);
-	LoadActor("DifficultyList/backer")..{
-		InitCommand = function(s) s:draworder(100):
-			x(SCREEN_CENTER_X-384):y(SCREEN_CENTER_Y)
-		end;
-	};
-};
-
 t[#t+1] = StandardDecorationFromFileOptional("DifficultyListP1","DifficultyListP1");
 t[#t+1] = StandardDecorationFromFileOptional("DifficultyListP2","DifficultyListP2");
+
+
+--DIFFICULTY DISPLAY
+local stepsArray
+
+local function SortCharts(a,b)
+    local bST = StepsType:Compare(a:GetStepsType(),b:GetStepsType()) < 0
+    if a:GetStepsType() == b:GetStepsType() then
+        return a:GetMeter() < b:GetMeter()
+    else
+        return bST
+    end;
+end
+
+local function GetCurrentStepsIndex(pn)
+	local playerSteps = GAMESTATE:GetCurrentSteps(pn);
+	for i=1,#stepsArray do
+		if playerSteps == stepsArray[i] then
+			return i;
+		end;
+	end;
+	--If it reaches this point, the selected steps doesn't equal anything.
+	return -1;
+end;
+
+local function diffIcon(player, pos)
+	return Def.ActorFrame{
+	
+		--Nothing in this controls the coloring, the middle item is always the selected one so it's not dimmed
+		["CurrentSteps"..pname(player).."ChangedMessageCommand"]=function(self)
+			if not stepsArray then return end;
+			local index = GetCurrentStepsIndex(player);
+			if index+pos > 0 and index+pos < #stepsArray+1 then
+				self:visible(true);
+				local stepsForThisItem = stepsArray[index+pos];
+				local diffName = ToEnumShortString(stepsForThisItem:GetDifficulty())
+				self:GetChild("Base"):Load(THEME:GetPathG("","StepsDisplayListRow frame/bases/"..diffName));
+				self:GetChild("Color"):diffuse(CustomDifficultyToColor(diffName));
+				if pos == 0 then
+					self:GetChild("Color"):finishtweening():cropright(1):decelerate(.3):cropright(0);
+				end;
+				self:GetChild("Title"):Load(THEME:GetPathG("","StepsDisplayListRow frame/titles/"..diffName));
+				self:GetChild("Meter"):settext(stepsForThisItem:GetMeter());
+			else
+				self:visible(false);
+			end;
+		end;
+		
+		Def.Sprite{
+			Name="Base";
+			--InitCommand=cmd(visible,true);
+			
+			SetCommand=function(self,param)
+				if param.CustomDifficulty and param.CustomDifficulty ~= "" then
+					self:Load(THEME:GetPathG("","StepsDisplayListRow frame/bases/"..param.CustomDifficulty));
+				end;
+			end;
+		};
+		Def.Quad{
+			Name="Color";
+			InitCommand=cmd(xy,-187,-30;setsize,374,55;halign,0;cropright,1);
+			SetCommand=function(self,param)
+				if param.CustomDifficulty and param.CustomDifficulty ~= "" then
+					self:diffuse(CustomDifficultyToColor(param.CustomDifficulty) );
+				else
+					self:diffuse(color('1,1,1,1'));
+				end;
+			end;
+		};
+		Def.Sprite{
+			Name="Title";
+			InitCommand=cmd(halign,0;x,-140;y,-30);
+			SetCommand=function(self,param)
+				if param.CustomDifficulty and param.CustomDifficulty ~= "" then
+					self:Load(THEME:GetPathG("","StepsDisplayListRow frame/titles/"..param.CustomDifficulty));
+				end;
+			end;
+		};
+		LoadFont("_itc avant garde std bk 50px")..{
+			Name="Meter";
+			Text="999";
+			InitCommand=cmd(zoom,0.8;halign,1;x,174;y,-30);
+			OnCommand=function(self,param)
+				self:diffuse(color("#000000"))
+				self:strokecolor(color("#FFFFFF"))
+				--self:settext(param.Meter)
+			end;
+		};
+	}
+end;
+
+for pn in ivalues(GAMESTATE:GetEnabledPlayers()) do
+t[#t+1] = Def.ActorFrame{
+	CurrentSongChangedMessageCommand=function(self)
+		if GAMESTATE:GetCurrentSong() then
+			--stepsArray = GAMESTATE:GetCurrentSong():GetAllSteps();
+			stepsArray = GAMESTATE:GetCurrentSong():GetStepsByStepsType('StepsType_Dance_Single');
+			table.sort(stepsArray, SortCharts);
+		end;
+	end;
+	StartSelectingStepsMessageCommand=cmd(finishtweening;linear,0.2;addx,(pn==PLAYER_1 and 500 or -500));
+
+	SongUnchosenMessageCommand=function(s) s:playcommand("Unset") end;
+	OffCommand=function(s) s:playcommand("Unset") end;
+	UnsetCommand=function(s) s:finishtweening():linear(0.3):addx(pn==PLAYER_1 and -500 or 500) end;
+	InitCommand=cmd(xy,(pn==PLAYER_1 and SCREEN_CENTER_X-384-500 or SCREEN_CENTER_X+384+500),SCREEN_CENTER_Y);
+	LoadActor("DifficultyList/backer");
+	diffIcon(pn, -1)..{
+		InitCommand=cmd(addy,-150;diffuse,color(".5,.5,.5,1"));
+	};
+	diffIcon(pn, 0)..{
+		InitCommand=cmd();
+	};
+	
+	Def.ActorFrame{
+		InitCommand=cmd(xy,-165,-30;bob;effectmagnitude,3,0,0);
+		["CurrentSteps"..pname(pn).."ChangedMessageCommand"]=cmd(stopeffect;stoptweening;zoomy,0;linear,.25;zoomy,1;bob;effectmagnitude,3,0,0);
+		Def.Sprite{
+			Texture=THEME:GetPathG("StepsDisplayListRow","frame/arrow shadow");
+		};
+		Def.Sprite{
+			Texture=THEME:GetPathG("StepsDisplayListRow","frame/arrow color");	
+			InitCommand=cmd(diffuseshift;effectcolor1,color("#22ff00");effectcolor2,color("#FFFFFF");effectperiod,.3);
+		}
+	};
+	
+	diffIcon(pn, 1)..{
+		InitCommand=cmd(addy,150;diffuse,color(".5,.5,.5,1"));
+	};
+	
+
+
+};
+end;
+
+--END DIFFICULTY DISPLAY
+
+--wheel open animation, input handler, difficulty adjustment, etc
+
+--Copypasted from the source of ScreenSelectMusic.cpp
+local function ChangePreferredDifficulty(pn,dir)
+	local d = Enum.Reverse(Difficulty)[GAMESTATE:GetPreferredDifficulty(pn)]
+	--SCREENMAN:SystemMessage(d+dir)
+	if d+dir > 0 and d+dir<5 then
+		GAMESTATE:SetPreferredDifficulty(pn,Difficulty[1+d+dir])
+		SOUND:PlayOnce(THEME:GetPathS("ScreenSelectMusic", "difficulty harder"))
+	end;
+	--SCREENMAN:SystemMessage(Difficulty[1+d+dir])
+end;
+
+
+local function ChangeSteps(pn,dir)
+	if (GAMESTATE:GetCurrentSong()) then
+		local selection = GetCurrentStepsIndex(pn) + dir
+		if selection < #stepsArray+1 and selection > 0 then
+			GAMESTATE:SetCurrentSteps(pn,stepsArray[selection])
+			GAMESTATE:SetPreferredDifficulty(pn,stepsArray[selection]:GetDifficulty())
+			SOUND:PlayOnce(THEME:GetPathS("ScreenSelectMusic", "difficulty harder"))
+		end;
+	else
+		ChangePreferredDifficulty(pn,dir)
+	end;
+end;
+
+
+local numwh = THEME:GetMetric("MusicWheel","NumWheelItems")+2
+local twoPartSelectActive = false;
+local function inputs(event)
+	
+	local pn= event.PlayerNumber
+	local button = event.button
+	-- If the PlayerNumber isn't set, the button isn't mapped.  Ignore it.
+	--Also we only want it to activate when they're NOT selecting the difficulty.
+	--if not pn or not SCREENMAN:get_input_redirected(pn) then return end
+	if not pn then return end
+
+	-- If it's a release, ignore it.
+	if event.type == "InputEventType_Release" then return end
+	if button == "Center" or button == "Start" and musicWheel:GetSelectedType() == 'WheelItemDataType_Section' then
+		if musicWheel then
+			--[[	musicWheel:GetWheelItem(musicWheel:GetCurrentIndex())
+				--:sleep( (i > numwh/2) and i/20 or 0 )
+				:decelerate(.25):addy(-500)
+				:sleep(0)
+				:accelerate(0.25):addy(500)]]
+			--local wheel = musicWheel:GetChild("MusicWheelItem")
+			for i=0,numwh-1 do
+				--local inv = numwh-math.round( (i-numwh/2) )+1
+				local w = musicWheel:GetWheelItem(i)
+				--musicWheel:SetDrawByZPosition(false):zbuffer(false);
+				if w:GetType() == 2 then
+					local prevX = w:GetX();
+					w:stoptweening()
+					--:draworder(i):Draw()
+					:z(i)
+					:x(0):decelerate(.25):x(prevX);
+					--w:x(SCREEN_CENTER_X);
+					--:sleep( (i > numwh/2) and i/20 or 0 )
+					--:decelerate(.25):addy(-500)
+					--:sleep(0)
+					--:accelerate(0.25):addy(500)
+				else
+					w:z(100);
+				end;
+			end
+		end
+	elseif not twoPartSelectActive and button == "MenuDown" then
+		ChangeSteps(pn,1)
+	elseif not twoPartSelectActive and button == "MenuUp" then
+		ChangeSteps(pn,-1)
+	else
+		--SCREENMAN:SystemMessage(button)
+		
+	end;
+end;
+
+t[#t+1] = Def.ActorFrame{
+	OnCommand=function(self)
+		SCREENMAN:GetTopScreen():AddInputCallback(inputs);
+	end;
+	StartSelectingStepsMessageCommand=function(self)
+		twoPartSelectActive = true
+	end;
+	SongChosenMessageCommand=function(self)
+		twoPartSelectActive = true
+	end;
+	SongUnchosenMessageCommand=function(self)
+		twoPartSelectActive = false
+	end;
+}
 
 return t;
