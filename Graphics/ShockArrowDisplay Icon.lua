@@ -1,8 +1,6 @@
 local iPN = ...;
 assert(iPN,"[Graphics/ShockArrowDisplay Icon.lua] No PlayerNumber Provided.");
 
-local t = Def.ActorFrame {};
-
 local function GetRadarData( pnPlayer, rcRadarCategory )
 	local tRadarValues;
 	local StepsOrTrail;
@@ -21,16 +19,15 @@ end;
 
 
 local function CreatPanelDisplayShockArrowIcon(_pnPlayer, _sLabel, _rcRadarCategory )
+	--Returning LoadActor instead of an ActorFrame causes a weird bug... so don't do it.
 	return Def.ActorFrame {
 		LoadActor( "_ShockArrow" )..{
 			InitCommand=cmd(zoom,0);
 			OnCommand=cmd(playcommand,"Set");
-			CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
-			CurrentStepsP1ChangedMessageCommand=cmd(playcommand,"Set");
-			CurrentStepsP2ChangedMessageCommand=cmd(playcommand,"Set");
-			CurrentTrailP1ChangedMessageCommand=cmd(playcommand,"Set");
-			CurrentTrailP2ChangedMessageCommand=cmd(playcommand,"Set");
-			CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
+			--CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
+			["CurrentSteps"..ToEnumShortString(_pnPlayer).."ChangedMessageCommand"]=function(self) self:playcommand("Set") end,
+			["CurrentTrail"..ToEnumShortString(_pnPlayer).."ChangedMessageCommand"]=function(self) self:playcommand("Set") end,
+			--CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
 			SetCommand=function(self)
 				local song = GAMESTATE:GetCurrentSong()
 				local course = GAMESTATE:GetCurrentCourse()
@@ -62,14 +59,4 @@ end;
 
 
 --[[ Numbers ]]
-t[#t+1] = Def.ActorFrame {
-
-	
-	--shockarrowªí¥Üicon
-	CreatPanelDisplayShockArrowIcon(iPN, "Mines", 'RadarCategory_Mines')..{
-		InitCommand=cmd(x,0;y,0);
-		
-	}
-	
-};
-return t;
+return CreatPanelDisplayShockArrowIcon(iPN, "Mines", 'RadarCategory_Mines');

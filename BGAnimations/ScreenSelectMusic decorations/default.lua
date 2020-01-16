@@ -20,6 +20,7 @@ local function StepsDisplay(pn)
 		InitCommand=cmd(Load,"StepsDisplay",GAMESTATE:GetPlayerState(pn););
 	};
 
+	--This only adds the command for the corresponding player, so it's technically not wasteful
 	if pn == PLAYER_1 then
 		t.CurrentStepsP1ChangedMessageCommand=function(self) set(self, pn); end;
 		t.CurrentTrailP1ChangedMessageCommand=function(self) set(self, pn); end;
@@ -58,25 +59,24 @@ local function DrawDifList(pn,diff)
 		LoadFont("_itc avant garde std bk 20px")..{
 			InitCommand=cmd(diffuse,color("#000000");strokecolor,Color("White");zoom,0.9);
 			SetCommand=function(self)
-			local st=GAMESTATE:GetCurrentStyle():GetStepsType();
-			local song=GAMESTATE:GetCurrentSong();
-			local course = GAMESTATE:GetCurrentCourse();
-			if song then
-				GetDifListX(self,pn,110,0);
-				if song:HasStepsTypeAndDifficulty(st,diff) then
-				local steps = song:GetOneSteps( st, diff );
-					self:settext(steps:GetMeter());
-				else
-					self:settext("");
+				local st=GAMESTATE:GetCurrentStyle():GetStepsType();
+				local song=GAMESTATE:GetCurrentSong();
+				--local course = GAMESTATE:GetCurrentCourse();
+				if song then
+					GetDifListX(self,pn,110,0);
+					if song:HasStepsTypeAndDifficulty(st,diff) then
+						local steps = song:GetOneSteps( st, diff );
+						self:settext(steps:GetMeter());
+					else
+						self:settext("");
+					end;
 				end;
 			end;
-			end;
-		CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
-		CurrentStepsP1ChangedMessageCommand=cmd(playcommand,"Set");
-		CurrentStepsP2ChangedMessageCommand=cmd(playcommand,"Set");
-		CurrentTrailP1ChangedMessageCommand=cmd(playcommand,"Set");
-		CurrentTrailP2ChangedMessageCommand=cmd(playcommand,"Set");
-		CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
+			
+			CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
+			["CurrentSteps"..pname(pn).."ChangedMessageCommand"]=cmd(playcommand,"Set");
+			["CurrentTrail"..pname(pn).."ChangedMessageCommand"]=cmd(playcommand,"Set");
+			CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
 		};
 	};
 end;
@@ -301,14 +301,17 @@ if not GAMESTATE:IsCourseMode() then
 					currentPane = nil;
 					return
 				end;
-				self:linear(.15):x(pn == PLAYER_1 and SCREEN_LEFT or 0);
-				self:GetChild("PaneBG"):setstate(currentPane);
-				self:GetChild("PaneNumbers"):setstate(currentPane);
-				
-				self:GetChild("Difficulty"):visible(currentPane==0);
-				self:GetChild("Radar"):visible(currentPane==1);
-				self:GetChild("Scores"):visible(currentPane==2);
-				self:playcommand("Set2");
+				--Because there are some other codemessage commands and I don't want this to trigger when none of the panes are open
+				if currentPane then
+					self:linear(.15):x(pn == PLAYER_1 and SCREEN_LEFT or 0);
+					self:GetChild("PaneBG"):setstate(currentPane);
+					self:GetChild("PaneNumbers"):setstate(currentPane);
+					
+					self:GetChild("Difficulty"):visible(currentPane==0);
+					self:GetChild("Radar"):visible(currentPane==1);
+					self:GetChild("Scores"):visible(currentPane==2);
+					self:playcommand("Set2");
+				end;
 			end;
 			--Only update the opened pane, because these panes are lagtastic
 			CurrentSongChangedMessageCommand=function(self) self:playcommand("Set2") end,
@@ -374,8 +377,34 @@ end;
 t[#t+1] = StandardDecorationFromFileOptional("BPMDisplay","BPMDisplay");
 t[#t+1] = StandardDecorationFromFileOptional("BPMLabel","BPMLabel");
 t[#t+1] = StandardDecorationFromFileOptional("SegmentDisplay","SegmentDisplay");
-t[#t+1] = StandardDecorationFromFileOptional("ShockArrowDisplayP1","ShockArrowDisplayP1");
-t[#t+1] = StandardDecorationFromFileOptional("ShockArrowDisplayP2","ShockArrowDisplayP2");
+
+--LoadActor(THEME:GetPathG("ShockArrowDisplay","Icon"),PLAYER_1);
+--[[
+ShowShockArrowDisplayP1=true
+ShockArrowDisplayP1X=SCREEN_CENTER_X-203
+ShockArrowDisplayP1Y=SCREEN_CENTER_Y-95-40-11
+ShockArrowDisplayP1OnCommand=player,PLAYER_1;draworder,100;zoom,0;decelerate,0.2;zoom,0.95;
+ShockArrowDisplayP1OffCommand=decelerate,0.2;zoom,0;
+ShockArrowDisplayP1PlayerJoinedMessageCommand=%function(self,params) if params.Player == PLAYER_1 then self:playcommand("On") end end
+#
+ShowShockArrowDisplayP2=true
+ShockArrowDisplayP2X=SCREEN_CENTER_X+203
+ShockArrowDisplayP2Y=SCREEN_CENTER_Y-95-40-11
+ShockArrowDisplayP2OnCommand=player,PLAYER_2;draworder,100;zoom,0;decelerate,0.2;zoom,0.95;
+ShockArrowDisplayP2OffCommand=decelerate,0.2;zoom,0;
+ShockArrowDisplayP2PlayerJoinedMessageCommand=%function(self,params) if params.Player == PLAYER_2 then self:playcommand("On") end end
+]]
+--t[#t+1] = StandardDecorationFromFileOptional("ShockArrowDisplayP1","ShockArrowDisplayP1");
+--t[#t+1] = StandardDecorationFromFileOptional("ShockArrowDisplayP2","ShockArrowDisplayP2");
+for pn in ivalues( GAMESTATE:GetHumanPlayers() ) do
+	t[#t+1] = LoadActor(THEME:GetPathG("ShockArrowDisplay","Icon"),pn)..{
+		InitCommand=function(self) 
+			self:x(pn == PLAYER_1 and SCREEN_CENTER_X-203 or SCREEN_CENTER_X+203):y(SCREEN_CENTER_Y-95-40-11)
+		end;
+		OnCommand=function(self) self:draworder(100):zoom(0):decelerate(.2):zoom(.95) end;
+		OffCommand=function(self) self:decelerate(.2):zoom(0) end;
+	};
+end;
 
 if not GAMESTATE:IsCourseMode() then
 	t[#t+1] = StandardDecorationFromFileOptional("NewSong","NewSong") .. {
@@ -762,141 +791,79 @@ if GAMESTATE:IsCourseMode() then
 		end;
 	};
 end;
---grades
-t[#t+1] = Def.ActorFrame {
-InitCommand=cmd(addy,-110);
-	Def.Quad{
-	InitCommand=cmd(zoom,0.8;shadowlength,1;x,SCREEN_CENTER_X-204;y,SCREEN_CENTER_Y+100;horizalign,center;draworder,2);
-	OffCommand=cmd(bouncebegin,0.15;zoom,0);
-		BeginCommand=cmd(playcommand,"Set");
-		SetCommand=function(self)
-			local SongOrCourse, StepsOrTrail;
-			if GAMESTATE:IsCourseMode() then
-				SongOrCourse = GAMESTATE:GetCurrentCourse();
-				StepsOrTrail = GAMESTATE:GetCurrentTrail(PLAYER_1);
-			else
-				SongOrCourse = GAMESTATE:GetCurrentSong();
-				StepsOrTrail = GAMESTATE:GetCurrentSteps(PLAYER_1);
-			end;
-
-			local profile, scorelist;
-			local text = "";
-			if SongOrCourse and StepsOrTrail then
-				local st = StepsOrTrail:GetStepsType();
-				local diff = StepsOrTrail:GetDifficulty();
-				local courseType = GAMESTATE:IsCourseMode() and SongOrCourse:GetCourseType() or nil;
-
-				if PROFILEMAN:IsPersistentProfile(PLAYER_1) then
-					-- player profile
-					profile = PROFILEMAN:GetProfile(PLAYER_1);
+for pn in ivalues( GAMESTATE:GetHumanPlayers() ) do
+	--grades
+	t[#t+1] = Def.ActorFrame {
+		InitCommand=cmd(addy,-110);
+		Def.Quad{
+			InitCommand=cmd(zoom,0.8;shadowlength,1;x,(pn==PLAYER_1 and SCREEN_CENTER_X-204 or SCREEN_CENTER_X+204);y,SCREEN_CENTER_Y+100;horizalign,center;draworder,2);
+			OffCommand=cmd(bouncebegin,0.15;zoom,0);
+			BeginCommand=cmd(playcommand,"Set");
+			SetCommand=function(self)
+				local SongOrCourse, StepsOrTrail;
+				if GAMESTATE:IsCourseMode() then
+					SongOrCourse = GAMESTATE:GetCurrentCourse();
+					StepsOrTrail = GAMESTATE:GetCurrentTrail(pn);
 				else
-					-- machine profile
-					profile = PROFILEMAN:GetMachineProfile();
+					SongOrCourse = GAMESTATE:GetCurrentSong();
+					StepsOrTrail = GAMESTATE:GetCurrentSteps(pn);
 				end;
 
-				scorelist = profile:GetHighScoreList(SongOrCourse,StepsOrTrail);
-				assert(scorelist);
-					local scores = scorelist:GetHighScores();
-					assert(scores);
-					local topscore=0;
-					if scores[1] then
-						topscore = scores[1]:GetScore();
+				local profile, scorelist;
+				local text = "";
+				if SongOrCourse and StepsOrTrail then
+					local st = StepsOrTrail:GetStepsType();
+					local diff = StepsOrTrail:GetDifficulty();
+					local courseType = GAMESTATE:IsCourseMode() and SongOrCourse:GetCourseType() or nil;
+
+					if PROFILEMAN:IsPersistentProfile(pn) then
+						-- player profile
+						profile = PROFILEMAN:GetProfile(pn);
+					else
+						-- machine profile
+						profile = PROFILEMAN:GetMachineProfile();
 					end;
-					assert(topscore);
-					local topgrade;
-					if scores[1] then
-						topgrade = scores[1]:GetGrade();
-						assert(topgrade);
-						if scores[1]:GetScore()>1  then
-							if scores[1]:GetScore()==1000000 and topgrade=="Grade_Tier07" then
-								self:LoadBackground(THEME:GetPathG("myMusicWheel","Tier01"));
-								self:diffusealpha(1);
+
+					scorelist = profile:GetHighScoreList(SongOrCourse,StepsOrTrail);
+					assert(scorelist);
+						local scores = scorelist:GetHighScores();
+						assert(scores);
+						local topscore=0;
+						if scores[1] then
+							topscore = scores[1]:GetScore();
+						end;
+						assert(topscore);
+						local topgrade;
+						if scores[1] then
+							topgrade = scores[1]:GetGrade();
+							assert(topgrade);
+							if scores[1]:GetScore()>1  then
+								if scores[1]:GetScore()==1000000 and topgrade=="Grade_Tier07" then
+									self:LoadBackground(THEME:GetPathG("myMusicWheel","Tier01"));
+									self:diffusealpha(1);
+								else
+									self:LoadBackground(THEME:GetPathG("myMusicWheel",ToEnumShortString(topgrade)));
+									self:diffusealpha(1);
+								end;
 							else
-								self:LoadBackground(THEME:GetPathG("myMusicWheel",ToEnumShortString(topgrade)));
-								self:diffusealpha(1);
+								self:diffusealpha(0);
 							end;
 						else
 							self:diffusealpha(0);
 						end;
-					else
-						self:diffusealpha(0);
-					end;
-			else
-				self:diffusealpha(0);
-			end;
-		end;
-		CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
-		CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
-		CurrentStepsP1ChangedMessageCommand=cmd(playcommand,"Set");
-		CurrentTrailP1ChangedMessageCommand=cmd(playcommand,"Set");
-	};
---p2
-	Def.Quad{
-	InitCommand=cmd(zoom,0.8;shadowlength,1;x,SCREEN_CENTER_X+204;y,SCREEN_CENTER_Y+100;horizalign,center;draworder,2);
-	OffCommand=cmd(bouncebegin,0.15;zoom,0);
-		BeginCommand=cmd(playcommand,"Set");
-		SetCommand=function(self)
-			local SongOrCourse, StepsOrTrail;
-			if GAMESTATE:IsCourseMode() then
-				SongOrCourse = GAMESTATE:GetCurrentCourse();
-				StepsOrTrail = GAMESTATE:GetCurrentTrail(PLAYER_2);
-			else
-				SongOrCourse = GAMESTATE:GetCurrentSong();
-				StepsOrTrail = GAMESTATE:GetCurrentSteps(PLAYER_2);
-			end;
-
-			local profile, scorelist;
-			local text = "";
-			if SongOrCourse and StepsOrTrail then
-				local st = StepsOrTrail:GetStepsType();
-				local diff = StepsOrTrail:GetDifficulty();
-				local courseType = GAMESTATE:IsCourseMode() and SongOrCourse:GetCourseType() or nil;
-
-				if PROFILEMAN:IsPersistentProfile(PLAYER_2) then
-					-- player profile
-					profile = PROFILEMAN:GetProfile(PLAYER_2);
 				else
-					-- machine profile
-					profile = PROFILEMAN:GetMachineProfile();
+					self:diffusealpha(0);
 				end;
-
-				scorelist = profile:GetHighScoreList(SongOrCourse,StepsOrTrail);
-				assert(scorelist);
-					local scores = scorelist:GetHighScores();
-					assert(scores);
-					local topscore=0;
-					if scores[1] then
-						topscore = scores[1]:GetScore();
-					end;
-					assert(topscore);
-					local topgrade;
-					if scores[1] then
-						topgrade = scores[1]:GetGrade();
-						assert(topgrade);
-						if scores[1]:GetScore()>1  then
-							if scores[1]:GetScore()==1000000 and topgrade=="Grade_Tier07" then
-								self:LoadBackground(THEME:GetPathG("myMusicWheel","Tier01"));
-								self:diffusealpha(1);
-							else
-								self:LoadBackground(THEME:GetPathG("myMusicWheel",ToEnumShortString(topgrade)));
-								self:diffusealpha(1);
-							end;
-						else
-							self:diffusealpha(0);
-						end;
-					else
-						self:diffusealpha(0);
-					end;
-			else
-				self:diffusealpha(0);
 			end;
-		end;
-		CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
-		CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
-		CurrentStepsP1ChangedMessageCommand=cmd(playcommand,"Set");
-		CurrentTrailP1ChangedMessageCommand=cmd(playcommand,"Set");
+			CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
+			CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
+			["CurrentSteps"..pname(pn).."ChangedMessageCommand"]=cmd(playcommand,"Set");
+			["CurrentTrail"..pname(pn).."ChangedMessageCommand"]=cmd(playcommand,"Set");
+		};
 	};
-};
+	
+	t[#t+1] = StandardDecorationFromFileOptional("DifficultyList"..pname(pn),"DifficultyList"..pname(pn));
+end;
 
 --[[t[#t+1] = Def.ActorFrame{
 	LoadActor("base")..{
@@ -906,8 +873,6 @@ InitCommand=cmd(addy,-110);
 	};
 };]]
 
-t[#t+1] = StandardDecorationFromFileOptional("DifficultyListP1","DifficultyListP1");
-t[#t+1] = StandardDecorationFromFileOptional("DifficultyListP2","DifficultyListP2");
 
 
 --DIFFICULTY DISPLAY
@@ -1000,47 +965,47 @@ local function diffIcon(player, pos)
 end;
 
 for pn in ivalues(GAMESTATE:GetEnabledPlayers()) do
-t[#t+1] = Def.ActorFrame{
-	CurrentSongChangedMessageCommand=function(self)
-		if GAMESTATE:GetCurrentSong() then
-			--stepsArray = GAMESTATE:GetCurrentSong():GetAllSteps();
-			stepsArray = GAMESTATE:GetCurrentSong():GetStepsByStepsType('StepsType_Dance_Single');
-			table.sort(stepsArray, SortCharts);
+	t[#t+1] = Def.ActorFrame{
+		CurrentSongChangedMessageCommand=function(self)
+			if GAMESTATE:GetCurrentSong() then
+				--stepsArray = GAMESTATE:GetCurrentSong():GetAllSteps();
+				stepsArray = GAMESTATE:GetCurrentSong():GetStepsByStepsType('StepsType_Dance_Single');
+				table.sort(stepsArray, SortCharts);
+			end;
 		end;
-	end;
-	StartSelectingStepsMessageCommand=cmd(finishtweening;linear,0.2;addx,(pn==PLAYER_1 and 500 or -500));
+		StartSelectingStepsMessageCommand=cmd(finishtweening;linear,0.2;addx,(pn==PLAYER_1 and 500 or -500));
 
-	SongUnchosenMessageCommand=function(s) s:playcommand("Unset") end;
-	OffCommand=function(s) s:playcommand("Unset") end;
-	UnsetCommand=function(s) s:finishtweening():linear(0.3):addx(pn==PLAYER_1 and -500 or 500) end;
-	InitCommand=cmd(xy,(pn==PLAYER_1 and SCREEN_CENTER_X-384-500 or SCREEN_CENTER_X+384+500),SCREEN_CENTER_Y);
-	LoadActor("DifficultyList/backer");
-	diffIcon(pn, -1)..{
-		InitCommand=cmd(addy,-150;diffuse,color(".5,.5,.5,1"));
-	};
-	diffIcon(pn, 0)..{
-		InitCommand=cmd();
-	};
-	
-	Def.ActorFrame{
-		InitCommand=cmd(xy,-165,-30;bob;effectmagnitude,3,0,0);
-		["CurrentSteps"..pname(pn).."ChangedMessageCommand"]=cmd(stopeffect;stoptweening;zoomy,0;linear,.25;zoomy,1;bob;effectmagnitude,3,0,0);
-		Def.Sprite{
-			Texture=THEME:GetPathG("StepsDisplayListRow","frame/arrow shadow");
+		SongUnchosenMessageCommand=function(s) s:playcommand("Unset") end;
+		OffCommand=function(s) s:playcommand("Unset") end;
+		UnsetCommand=function(s) s:finishtweening():linear(0.3):addx(pn==PLAYER_1 and -500 or 500) end;
+		InitCommand=cmd(xy,(pn==PLAYER_1 and SCREEN_CENTER_X-384-500 or SCREEN_CENTER_X+384+500),SCREEN_CENTER_Y);
+		LoadActor("DifficultyList/backer");
+		diffIcon(pn, -1)..{
+			InitCommand=cmd(addy,-150;diffuse,color(".5,.5,.5,1"));
 		};
-		Def.Sprite{
-			Texture=THEME:GetPathG("StepsDisplayListRow","frame/arrow color");	
-			InitCommand=cmd(diffuseshift;effectcolor1,color("#22ff00");effectcolor2,color("#FFFFFF");effectperiod,.3);
-		}
-	};
-	
-	diffIcon(pn, 1)..{
-		InitCommand=cmd(addy,150;diffuse,color(".5,.5,.5,1"));
-	};
-	
+		diffIcon(pn, 0)..{
+			InitCommand=cmd();
+		};
+		
+		Def.ActorFrame{
+			InitCommand=cmd(xy,-165,-30;bob;effectmagnitude,3,0,0);
+			["CurrentSteps"..pname(pn).."ChangedMessageCommand"]=cmd(stopeffect;stoptweening;zoomy,0;linear,.25;zoomy,1;bob;effectmagnitude,3,0,0);
+			Def.Sprite{
+				Texture=THEME:GetPathG("StepsDisplayListRow","frame/arrow shadow");
+			};
+			Def.Sprite{
+				Texture=THEME:GetPathG("StepsDisplayListRow","frame/arrow color");	
+				InitCommand=cmd(diffuseshift;effectcolor1,color("#22ff00");effectcolor2,color("#FFFFFF");effectperiod,.3);
+			}
+		};
+		
+		diffIcon(pn, 1)..{
+			InitCommand=cmd(addy,150;diffuse,color(".5,.5,.5,1"));
+		};
+		
 
 
-};
+	};
 end;
 
 --END DIFFICULTY DISPLAY
@@ -1118,6 +1083,9 @@ local function inputs(event)
 		ChangeSteps(pn,1)
 	elseif not twoPartSelectActive and button == "MenuUp" then
 		ChangeSteps(pn,-1)
+	elseif button == "Select" then
+		SCREENMAN:AddNewScreenToTop("ScreenPlayerOptions");
+		--return true
 	else
 		--SCREENMAN:SystemMessage(button)
 		
