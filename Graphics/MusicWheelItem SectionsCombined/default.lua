@@ -64,7 +64,7 @@ local t = Def.ActorFrame{
 				--SCREENMAN:SystemMessage(group)
 				if group_name[group] ~= nil and group_name[group][1] then
 					local filePath = THEME:GetPathG("","_jackets/group/"..group_name[group][1]..".png");
-					self:Load(filePath)
+					self:Load(filePath):diffuse(color("#FFFFFF"))
 					self:diffusealpha(1);
 					self:y(-2)
 				else
@@ -155,11 +155,12 @@ local t = Def.ActorFrame{
 		UpdateCommand=function(self)
 			if group then
 				if so == "SortOrder_Title" then
-					--Why is this check here?
-					if group ~= "" then
+					if group ~= "Other" then
 						self:Load(THEME:GetPathG("group title",group..".png"));
-						self:diffusealpha(1);
+					else
+						self:Load(THEME:GetPathG("group title","0-9.png"));
 					end;
+					self:diffusealpha(1);
 				elseif so == "SortOrder_BPM" then
 					local n = tonumber(split("-",group)[1]);
 					if n == nil then

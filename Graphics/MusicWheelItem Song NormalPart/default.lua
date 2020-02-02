@@ -41,7 +41,7 @@ local t = Def.ActorFrame {
 				if group_name[group] then
 					self:Load(THEME:GetPathG("","_jackets/backing/full/"..group_name[group][2]..".png"))
 
-					self:diffusealpha(1):setsize(174,210)
+					self:diffusealpha(1):setsize(174,210):diffuse(color("#FFFFFF"))
 					self:y(-2)
 				else
 					self:Load(THEME:GetPathG("","MusicWheelItem Song NormalPart/Backing.png"));
@@ -147,8 +147,8 @@ Def.Quad {
 	Def.Sprite {
 		Name="Banner";
 		InitCommand=cmd(scaletoclipped,128,128);
-		BannerCommand=cmd(scaletoclipped,128,128);
-		JacketCommand=cmd(scaletoclipped,128,128);
+		--[[BannerCommand=cmd(scaletoclipped,128,128);
+		JacketCommand=cmd(scaletoclipped,128,128);]]
 		SetMessageCommand=function(self,params)
 			local Song = params.Song;
 			local Course = params.Course;
@@ -158,31 +158,31 @@ Def.Quad {
 				end;
 				if ( Song:GetJacketPath() ~=  nil ) and ( bAllowJackets ) then
 					self:Load( Song:GetJacketPath() );
-					self:playcommand("Jacket");
+					--self:playcommand("Jacket");
 				elseif ( Song:GetBackgroundPath() ~= nil ) and ( bAllowJackets ) then
 					self:Load( Song:GetBackgroundPath() );
-					self:playcommand("Jacket");
+					--self:playcommand("Jacket");
 				elseif ( Song:GetBannerPath() ~= nil ) then
 					self:Load( Song:GetBannerPath() );
-					self:playcommand("Banner");
+					--self:playcommand("Banner");
 				else
 				  self:Load( bAllowJackets and sBannerPath or sJacketPath );
-				  self:playcommand( bAllowJackets and "Jacket" or "Banner" );
+				  --self:playcommand( bAllowJackets and "Jacket" or "Banner" );
 				end;
 			elseif Course then
 				if ( Course:GetBackgroundPath() ~= nil ) and ( bAllowJackets ) then
 					self:Load( Course:GetBackgroundPath() );
-					self:playcommand("Jacket");
+					--self:playcommand("Jacket");
 				elseif ( Course:GetBannerPath() ~= nil ) then
 					self:Load( Course:GetBannerPath() );
-					self:playcommand("Banner");
+					--self:playcommand("Banner");
 				else
 					self:Load( sJacketPath );
-					self:playcommand( bAllowJackets and "Jacket" or "Banner" );
+					--self:playcommand( bAllowJackets and "Jacket" or "Banner" );
 				end
 			else
 				self:Load( bAllowJackets and sJacketPath or sBannerPath );
-				self:playcommand( bAllowJackets and "Jacket" or "Banner" );
+				--self:playcommand( bAllowJackets and "Jacket" or "Banner" );
 			end;
 		end;
 	};
