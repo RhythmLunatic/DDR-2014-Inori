@@ -35,7 +35,7 @@ local t = Def.ActorFrame {
 			self:y(-2)
 		end;
 		SetMessageCommand=function(self,params)
-		group = params.Text;
+		group = string.gsub(params.Text,"^%d%d? ?%- ?", "");
 		local so = GAMESTATE:GetSortOrder();
 			if group then
 				if group_name[group] then
@@ -147,8 +147,8 @@ Def.Quad {
 	Def.Sprite {
 		Name="Banner";
 		InitCommand=cmd(scaletoclipped,128,128);
-		--[[BannerCommand=cmd(scaletoclipped,128,128);
-		JacketCommand=cmd(scaletoclipped,128,128);]]
+		BannerCommand=cmd(scaletoclipped,128,128);
+		JacketCommand=cmd(scaletoclipped,128,128);
 		SetMessageCommand=function(self,params)
 			local Song = params.Song;
 			local Course = params.Course;
@@ -158,37 +158,36 @@ Def.Quad {
 				end;
 				if ( Song:GetJacketPath() ~=  nil ) and ( bAllowJackets ) then
 					self:Load( Song:GetJacketPath() );
-					--self:playcommand("Jacket");
+					self:playcommand("Jacket");
 				elseif ( Song:GetBackgroundPath() ~= nil ) and ( bAllowJackets ) then
 					self:Load( Song:GetBackgroundPath() );
-					--self:playcommand("Jacket");
+					self:playcommand("Jacket");
 				elseif ( Song:GetBannerPath() ~= nil ) then
 					self:Load( Song:GetBannerPath() );
-					--self:playcommand("Banner");
+					self:playcommand("Banner");
 				else
 				  self:Load( bAllowJackets and sBannerPath or sJacketPath );
-				  --self:playcommand( bAllowJackets and "Jacket" or "Banner" );
+				  self:playcommand( bAllowJackets and "Jacket" or "Banner" );
 				end;
 			elseif Course then
 				if ( Course:GetBackgroundPath() ~= nil ) and ( bAllowJackets ) then
 					self:Load( Course:GetBackgroundPath() );
-					--self:playcommand("Jacket");
+					self:playcommand("Jacket");
 				elseif ( Course:GetBannerPath() ~= nil ) then
 					self:Load( Course:GetBannerPath() );
-					--self:playcommand("Banner");
+					self:playcommand("Banner");
 				else
 					self:Load( sJacketPath );
-					--self:playcommand( bAllowJackets and "Jacket" or "Banner" );
+					self:playcommand( bAllowJackets and "Jacket" or "Banner" );
 				end
 			else
 				self:Load( bAllowJackets and sJacketPath or sBannerPath );
-				--self:playcommand( bAllowJackets and "Jacket" or "Banner" );
+				self:playcommand( bAllowJackets and "Jacket" or "Banner" );
 			end;
 		end;
 	};
 --new song
-	Def.Sprite{
-		Texture="NEW";
+	LoadActor("NEW") .. {
 		InitCommand=cmd(y,-84;finishtweening;draworder,1;zoom,1;bob;effectmagnitude,0,5,0);
 		SetCommand=function(self,param)
 			if param.Song then
@@ -206,13 +205,13 @@ Def.Quad {
 
 if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
 	t[#t+1] = LoadActor("diff.lua",PLAYER_1)..{
-		InitCommand=function(s) s:xy(-62,-86) end;
+		InitCommand=cmd(xy,-61,-85);
 	}
 end;
 
 if GAMESTATE:IsPlayerEnabled(PLAYER_2) then
 	t[#t+1] = LoadActor("diff.lua",PLAYER_2)..{
-		InitCommand=function(s) s:xy(62,-86) end;
+		InitCommand=cmd(xy,61,-85);
 	}
 end;
 

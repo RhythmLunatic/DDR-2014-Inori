@@ -23,9 +23,13 @@ local t = Def.ActorFrame{
 			end;
 			firstRun = false;
 		end;
-		group = params.Text;
 		song = params.Song;
 		so = GAMESTATE:GetSortOrder();
+		if so and so == "SortOrder_Group" then
+			group = string.gsub(params.Text,"^%d%d? ?%- ?", "");
+		else
+			group = params.Text;
+		end;
 		--Does not work
 		--self:playcommandonchildren("Update");
 		--[[for i,a in ipairs(self:GetChildren()) do
@@ -97,7 +101,6 @@ local t = Def.ActorFrame{
 	Def.Sprite {
 		SetMessageCommand=function(self,params)
 			if not expanded then return end;
-			group = params.Text;
 			if group then
 				if group_name[group] then
 					local filePath = THEME:GetPathG("","_jackets/group/_extend/"..group_name[group][2]..".png");
@@ -152,8 +155,9 @@ local t = Def.ActorFrame{
 		UpdateCommand=function(self)
 			if group then
 				if so == "SortOrder_Title" then
+					--Why is this check here?
 					if group ~= "" then
-						self:Load(THEME:GetPathG("group title",group));
+						self:Load(THEME:GetPathG("group title",group..".png"));
 						self:diffusealpha(1);
 					end;
 				elseif so == "SortOrder_BPM" then
@@ -161,7 +165,7 @@ local t = Def.ActorFrame{
 					if n == nil then
 						self:Load( THEME:GetPathG("group bpm","NA"));
 					elseif n < 1000 then
-						self:Load(THEME:GetPathG("group bpm",tostring(n)));
+						self:Load(THEME:GetPathG("group bpm",group..".png"));
 					elseif n == 1000 then
 						self:Load(THEME:GetPathG("group bpm","a1000"));
 					else
@@ -283,7 +287,7 @@ local t = Def.ActorFrame{
 				if group_name[group] then
 					self:settext("");
 				else
-					self:settext(string.gsub(group,"^%d%d? ?%- ?", ""));
+					self:settext(group);
 					self:strokecolor(color("#000000"))
 					self:diffuse(color("#000000"));
 				end;
@@ -304,7 +308,7 @@ local t = Def.ActorFrame{
 				if group_name[group] then
 					self:settext("");
 				else
-					self:settext(string.gsub(group,"^%d%d? ?%- ?", ""));
+					self:settext(group);
 					self:strokecolor(color("#000000"))
 					self:diffuse(color("#FFFFFF"));
 				end;
