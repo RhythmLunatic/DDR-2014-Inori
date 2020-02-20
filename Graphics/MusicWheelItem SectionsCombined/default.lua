@@ -223,7 +223,6 @@ local t = Def.ActorFrame{
 		UpdateCommand=function(self)
 			if group then
 				if so == "SortOrder_Title" then
-<<<<<<< HEAD
 					self:visible(true);
 					self:Load(THEME:GetPathG("group name","Alphabet"));
 				elseif so == "SortOrder_AllDifficultyMeter" then
@@ -241,70 +240,8 @@ local t = Def.ActorFrame{
 				elseif so == "SortOrder_Genre" then
 					self:visible(false);
 					--genre sort
-					--[[if group == "Pop" then
-=======
-					self:diffusealpha(1);
-					self:Load(THEME:GetPathG("group name","Alphabet"));
-				elseif so == "SortOrder_AllDifficultyMeter" then
-					self:diffusealpha(1);
-					self:Load(THEME:GetPathG("group name","Dance Level"));
-				elseif so == "SortOrder_BPM" then
-					self:diffusealpha(1);
-					self:Load(THEME:GetPathG("group name","BPM"));
-				elseif so == "SortOrder_Popularity" then
-					self:diffusealpha(1);
-					self:Load(THEME:GetPathG("group name","Popularity"));
-				elseif so == "SortOrder_TopGrades" then
-					self:diffusealpha(1);
-					self:Load(THEME:GetPathG("group name","Cleared Rank"));
-				elseif so == "SortOrder_Genre" then
-					self:diffusealpha(1);
-					--genre sort
-					if group == "Pop" then
->>>>>>> 31be6091c5fd99957f162d271afec70dd77d06cc
-					self:Load(THEME:GetPathG("group name genre","Pop"));
-					elseif group == "Anime/Game" then
-					self:Load(THEME:GetPathG("group name genre","AnimeGame"));
-					elseif group == "Variety" then
-					self:Load(THEME:GetPathG("group name genre","Variety"));
-					elseif group == "GUMI 5th anniversary" then
-					self:Load(THEME:GetPathG("group name genre","GUMI"));
-					elseif group == "U.M.U. x BEMANI" then
-					self:Load(THEME:GetPathG("group name genre","UMU"));
-					elseif group == "KONAMI originals" then
-					self:Load(THEME:GetPathG("group name genre","KONAMI"));
-					--series sort
-					elseif group == "beatmania IIDX" then
-					self:Load(THEME:GetPathG("group name series","IIDX"));
-					elseif group == "pop'n music" then
-					self:Load(THEME:GetPathG("group name series","popn"));
-					elseif group == "GITADORA" then
-					self:Load(THEME:GetPathG("group name series","GITADORA"));
-					elseif group == "jubeat" then
-					self:Load(THEME:GetPathG("group name series","jubeat"));
-					elseif group == "REFLEC BEAT" then
-					self:Load(THEME:GetPathG("group name series","RB"));
-					elseif group == "DanceEvolution" then
-					self:Load(THEME:GetPathG("group name series","DanceEvolution"));
-					elseif group == "SOUND VOLTEX" then
-					self:Load(THEME:GetPathG("group name series","SDVX"));
-					elseif group == "FutureTomTom" then
-					self:Load(THEME:GetPathG("group name series","FutureTomTom"));
-					elseif group == "DDR" then
-					self:Load(THEME:GetPathG("group name","DDR"));
-					else
-<<<<<<< HEAD
-						self:visible(false);
-					end;]]
 				elseif so == "SortOrder_Group" or so == "SortOrder_Preferred" then
-						self:visible(false);
-=======
-						self:diffusealpha(0);
-					end;
-				elseif so == "SortOrder_Group" then
-						self:diffusealpha(0);
->>>>>>> 31be6091c5fd99957f162d271afec70dd77d06cc
-					end;
+					self:visible(false);
 				end;
 			end;
 		};
