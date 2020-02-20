@@ -1,4 +1,5 @@
 local t = LoadFallbackB();
+local musicWheel;
 
 --do return t end;
 
@@ -470,6 +471,11 @@ t[#t+1] = Def.Quad{
 				else
 					self:diffuse(color("#195c64"));
 				end;
+			elseif musicWheel and so == "SortOrder_Preferred" then
+				local group = musicWheel:GetSelectedSection() or ""
+				if group_name[group] then
+					self:diffuse(color(group_name[group][4]));
+				end;
 			elseif so == "SortOrder_Title" then
 				self:diffuse(color("#f98b2d"));
 			elseif so == "SortOrder_Artist" then
@@ -512,17 +518,25 @@ t[#t+1] = LoadFont("Common Normal")..{
 			end;
 			self:diffusealpha(1);
 			return;
+		elseif musicWheel and so == "SortOrder_Preferred" then
+			local group = musicWheel:GetSelectedSection() or ""
+			if group_name[group] then
+				self:strokecolor(ColorDarkTone(color(group_name[group][4])));
+				self:settext(group_name[group][3]);
+			end;
+			self:diffusealpha(1);
+			return;
 		end;
 		
 		local group_colors= {
 			["SortOrder_Title"]= "#864b21",
 			["SortOrder_Artist"]= "#864b21",
 			["SortOrder_BPM"]= "#006a56",
-			["SortOrder_BeginnerMeter"]= "#1e1e68",
+		--[[	["SortOrder_BeginnerMeter"]= "#1e1e68",
 			["SortOrder_EasyMeter"]= "#1e1e68",
 			["SortOrder_MediumMeter"]= "#1e1e68",
 			["SortOrder_HardMeter"]= "#1e1e68",
-			["SortOrder_ChallengeMeter"]= "#1e1e68",
+			["SortOrder_ChallengeMeter"]= "#1e1e68",]]
 			["SortOrder_Popularity"]= "#2e0d54",
 			["SortOrder_TopGrades"]= "#254f07",
 			["SortOrder_Genre"]= "#015b61",
@@ -535,7 +549,7 @@ t[#t+1] = LoadFont("Common Normal")..{
 				self:settext("Artist/");
 		elseif so == "SortOrder_BPM" then
 				self:settext("BPM");
-		elseif so == "SortOrder_BeginnerMeter" then
+		--[[elseif so == "SortOrder_BeginnerMeter" then
 				self:settext("Beginner/");
 		elseif so == "SortOrder_EasyMeter" then
 				self:settext("Basic/");
@@ -544,7 +558,7 @@ t[#t+1] = LoadFont("Common Normal")..{
 		elseif so == "SortOrder_HardMeter" then
 				self:settext("Expert/");
 		elseif so == "SortOrder_ChallengeMeter" then
-				self:settext("Challenge/");
+				self:settext("Challenge/");]]
 		elseif so == "SortOrder_Popularity" then
 				self:settext("Popularity/");
 		elseif so == "SortOrder_TopGrades" then
@@ -559,7 +573,6 @@ t[#t+1] = LoadFont("Common Normal")..{
 };
 
 --SONG & GROUP LARGE JACKET
-local musicWheel;
 t[#t+1] = Def.ActorFrame{
  	InitCommand=cmd(CenterX;y,SCREEN_CENTER_Y-110-5-15-8;diffusealpha,1;draworder,1);
 	OnCommand=function(self)
@@ -593,9 +606,10 @@ t[#t+1] = Def.ActorFrame{
 				return
 			end;
 			self:visible(true);
-			if musicWheel:GetSelectedType() == 'WheelItemDataType_Sort' then
+			if musicWheel:GetSelectedType() == 'WheelItemDataType_Sort' or musicWheel:GetSelectedType() ==  'WheelItemDataType_Custom' then
+				--Refer to MusicWheelItem SectionsCombined
 				self:Load(THEME:GetPathG("","_jackets/"..getenv("getgroupname")));
-				
+			
 			elseif musicWheel:GetSelectedType() == 'WheelItemDataType_Section' then
 				local so = GAMESTATE:GetSortOrder()
 				if so == "SortOrder_Group" then
@@ -608,6 +622,11 @@ t[#t+1] = Def.ActorFrame{
 						self:LoadFromSongGroup(group);
 					end;
 					self:scaletoclipped(304,304);
+				elseif so == "SortOrder_Preferred" then
+					local group = musicWheel:GetSelectedSection();
+					if group_name[group] then
+						self:Load(THEME:GetPathG("","_jackets/group/big jacket/"..group_name[group][1]..".png"))
+					end;
 				else
 					self:Load(THEME:GetPathG("","_jackets/"..THEME:GetString("MusicWheel",ToEnumShortString(so).."Text")))
 				end;
@@ -721,10 +740,10 @@ local function updateTitle(self)
 		upArt:diffuse(color("0.15,0.15,0.15,1"));
 		upArt:strokecolor(Color("White"));
 	else
-		if musicWheel:GetSelectedType() == 'WheelItemDataType_Sort' then
+		if musicWheel:GetSelectedType() == 'WheelItemDataType_Sort'  or musicWheel:GetSelectedType() ==  'WheelItemDataType_Custom' then
 			upTit:settext(getenv("getgroupname") or "nil?");
 		else
-			if GAMESTATE:GetSortOrder() == "SortOrder_Group" then
+			if GAMESTATE:GetSortOrder() == "SortOrder_Group" or GAMESTATE:GetSortOrder() == "SortOrder_Preferred" then
 				upTit:settext(musicWheel:GetSelectedSection() or "");
 			else
 				upTit:settext("Music Sort "..musicWheel:GetSelectedSection() or "");

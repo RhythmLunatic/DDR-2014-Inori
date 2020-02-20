@@ -23,7 +23,7 @@ local t = Def.ActorFrame{
 			end;
 			firstRun = false;
 		end;
-		group = params.Text;
+		group = string.gsub(params.Text,"^%d%d? ?%- ?", "");
 		song = params.Song;
 		so = GAMESTATE:GetSortOrder();
 		--Does not work
@@ -97,7 +97,6 @@ local t = Def.ActorFrame{
 	Def.Sprite {
 		SetMessageCommand=function(self,params)
 			if not expanded then return end;
-			group = params.Text;
 			if group then
 				if group_name[group] then
 					local filePath = THEME:GetPathG("","_jackets/group/_extend/"..group_name[group][2]..".png");
@@ -218,24 +217,24 @@ local t = Def.ActorFrame{
 		UpdateCommand=function(self)
 			if group then
 				if so == "SortOrder_Title" then
-					self:diffusealpha(1);
+					self:visible(true);
 					self:Load(THEME:GetPathG("group name","Alphabet"));
 				elseif so == "SortOrder_AllDifficultyMeter" then
-					self:diffusealpha(1);
+					self:visible(true);
 					self:Load(THEME:GetPathG("group name","Dance Level"));
 				elseif so == "SortOrder_BPM" then
-					self:diffusealpha(1);
+					self:visible(true);
 					self:Load(THEME:GetPathG("group name","BPM"));
 				elseif so == "SortOrder_Popularity" then
-					self:diffusealpha(1);
+					self:visible(true);
 					self:Load(THEME:GetPathG("group name","Popularity"));
 				elseif so == "SortOrder_TopGrades" then
-					self:diffusealpha(1);
+					self:visible(true);
 					self:Load(THEME:GetPathG("group name","Cleared Rank"));
 				elseif so == "SortOrder_Genre" then
-					self:diffusealpha(1);
+					self:visible(false);
 					--genre sort
-					if group == "Pop" then
+					--[[if group == "Pop" then
 					self:Load(THEME:GetPathG("group name genre","Pop"));
 					elseif group == "Anime/Game" then
 					self:Load(THEME:GetPathG("group name genre","AnimeGame"));
@@ -267,10 +266,10 @@ local t = Def.ActorFrame{
 					elseif group == "DDR" then
 					self:Load(THEME:GetPathG("group name","DDR"));
 					else
-						self:diffusealpha(0);
-					end;
-				elseif so == "SortOrder_Group" then
-						self:diffusealpha(0);
+						self:visible(false);
+					end;]]
+				elseif so == "SortOrder_Group" or so == "SortOrder_Preferred" then
+						self:visible(false);
 					end;
 				end;
 			end;
@@ -283,7 +282,7 @@ local t = Def.ActorFrame{
 				if group_name[group] then
 					self:settext("");
 				else
-					self:settext(string.gsub(group,"^%d%d? ?%- ?", ""));
+					self:settext(group);
 					self:strokecolor(color("#000000"))
 					self:diffuse(color("#000000"));
 				end;
@@ -304,7 +303,7 @@ local t = Def.ActorFrame{
 				if group_name[group] then
 					self:settext("");
 				else
-					self:settext(string.gsub(group,"^%d%d? ?%- ?", ""));
+					self:settext(group);
 					self:strokecolor(color("#000000"))
 					self:diffuse(color("#FFFFFF"));
 				end;

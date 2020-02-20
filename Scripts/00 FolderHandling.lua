@@ -37,8 +37,51 @@ group_name = {
   ["DanceDanceRevolution SuperNOVA3"] = 	{"18 - DDR SuperNOVA3","green","Version/SuperNOVA3","#81f1a9"};
   ["DanceDanceRevolution XX -Starlight-"] = {"19 - DDR XX","dark blue","Version/STARLiGHT","#001aff"};
   ["00 - BOSS ON PARADE"] = 				{"00 - BOSS ON PARADE","magenta","BOSS ON PARADE","#ae00ff"};
+  --Bemani sort
+  ["DanceEvolution"] = 						{"DanceEvolution","lighter blue","Series/DanceEvolution","#12d0f2"};
+  ["Sound Voltex"] = 						{"SDVX","pink","Series/Sound Voltex","#eb8cc8"};
+  ["jubeat"] =								{"Jubeat","white","Series/jubeat","#f1f5fb"};
+  ["Gitadora"] =							{"Gitadora","purple","Series/Gitadora","#a592d5"};
+  ["Reflec Beat"] =							{"Reflec Beat","green","Series/Reflec Beat","#81f1a9"};
+  ["FutureTomTom"] =						{"FutureTomTom","yellow","Series/FutureTomTom","#fff582"};
+  ["Pop'n Music"] =							{"popn music","yellow","Series/Pop'n Music","#fff582"};
+  ["beatmania IIDX"] =						{"beatmania IIDX","dark blue","Series/beatmania IIDX","#0165ac"};
 };
 
+--[[
+--TODO: use group_colors
+if group == "Pop" then
+	self:diffuse(color("#ffbe32"));
+elseif group == "Anime/Game" then
+	self:diffuse(color("#fff582"));
+elseif group == "Variety" then
+	self:diffuse(color("#eb8cc8"));
+elseif group == "GUMI 5th anniversary" then
+	self:diffuse(color("#b8e267"));
+elseif group == "U.M.U. x BEMANI" then
+	self:diffuse(color("#fbafb4"));
+elseif group == "KONAMI originals" then
+	self:diffuse(color("#fa4b3c"));
+elseif group == "beatmania IIDX" then
+	self:diffuse(color("#0165ac"));
+elseif group == "pop'n music" then
+	self:diffuse(color("#fff582"));
+elseif group == "GITADORA" then
+	self:diffuse(color("#a592d5"));
+elseif group == "jubeat" then
+	self:diffuse(color("#f1f5fb"));
+elseif group == "REFLEC BEAT" then
+	self:diffuse(color("#81f1a9"));
+elseif group == "DanceEvolution" then
+	self:diffuse(color("#12d0f2"));
+elseif group == "SOUND VOLTEX" then
+	self:diffuse(color("#eb8cc8"));
+elseif group == "FutureTomTom" then
+	self:diffuse(color("#fff582"));	
+elseif group == "DDR" then
+	self:diffuse(color("#43ff9d"));
+else 
+]]
 
 --TODO: Get rid of this
 group_colors= {
