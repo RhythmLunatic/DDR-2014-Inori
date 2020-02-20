@@ -465,7 +465,7 @@ t[#t+1] = Def.Quad{
 		local so = GAMESTATE:GetSortOrder();
 		if not GAMESTATE:IsCourseMode() and song then
 			if so == "SortOrder_Group" then
-				local group = song:GetGroupName()
+				local group = string.gsub(song:GetGroupName(),"^%d%d? ?%- ?", "");
 				if group_name[group] then
 					self:diffuse(color(group_name[group][4]));
 				else
@@ -508,13 +508,13 @@ t[#t+1] = LoadFont("Common Normal")..{
 
 	if song then
 		if so == "SortOrder_Group" then
-			local group = song:GetGroupName()
+			local group = string.gsub(song:GetGroupName(),"^%d%d? ?%- ?", "")
 			if group_name[group] then
 				self:strokecolor(ColorDarkTone(color(group_name[group][4])));
 				self:settext(group_name[group][3]);
 			else
 				self:strokecolor(color("#195c64"))
-				self:settext("Version/"..string.gsub(song:GetGroupName(),"^%d%d? ?%- ?", ""));
+				self:settext("Version/"..group);
 			end;
 			self:diffusealpha(1);
 			return;
@@ -743,7 +743,9 @@ local function updateTitle(self)
 		if musicWheel:GetSelectedType() == 'WheelItemDataType_Sort'  or musicWheel:GetSelectedType() ==  'WheelItemDataType_Custom' then
 			upTit:settext(getenv("getgroupname") or "nil?");
 		else
-			if GAMESTATE:GetSortOrder() == "SortOrder_Group" or GAMESTATE:GetSortOrder() == "SortOrder_Preferred" then
+			if GAMESTATE:GetSortOrder() == "SortOrder_Group" then
+				upTit:settext(string.gsub(musicWheel:GetSelectedSection() or "","^%d%d? ?%- ?", ""));
+			elseif GAMESTATE:GetSortOrder() == "SortOrder_Preferred" then
 				upTit:settext(musicWheel:GetSelectedSection() or "");
 			else
 				upTit:settext("Music Sort "..musicWheel:GetSelectedSection() or "");

@@ -40,8 +40,7 @@ local t = Def.ActorFrame {
 			if group then
 				if group_name[group] then
 					self:Load(THEME:GetPathG("","_jackets/backing/full/"..group_name[group][2]..".png"))
-
-					self:diffusealpha(1):setsize(174,210):diffuse(color("White"));
+					self:diffusealpha(1):setsize(174,210):diffuse(color("#FFFFFF"))
 					self:y(-2)
 				else
 					self:Load(THEME:GetPathG("","MusicWheelItem Song NormalPart/Backing.png"));
@@ -154,8 +153,7 @@ Def.Quad {
 		end;
 	};
 --new song
-	Def.Sprite{
-		Texture="NEW";
+	LoadActor("NEW") .. {
 		InitCommand=cmd(y,-84;finishtweening;draworder,1;zoom,1;bob;effectmagnitude,0,5,0);
 		SetCommand=function(self,param)
 			if param.Song then
@@ -173,13 +171,13 @@ Def.Quad {
 
 if GAMESTATE:IsPlayerEnabled(PLAYER_1) then
 	t[#t+1] = LoadActor("diff.lua",PLAYER_1)..{
-		InitCommand=function(s) s:xy(-62,-86) end;
+		InitCommand=cmd(xy,-61,-85);
 	}
 end;
 
 if GAMESTATE:IsPlayerEnabled(PLAYER_2) then
 	t[#t+1] = LoadActor("diff.lua",PLAYER_2)..{
-		InitCommand=function(s) s:xy(62,-86) end;
+		InitCommand=cmd(xy,61,-85);
 	}
 end;
 

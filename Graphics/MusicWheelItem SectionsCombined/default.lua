@@ -23,9 +23,13 @@ local t = Def.ActorFrame{
 			end;
 			firstRun = false;
 		end;
-		group = string.gsub(params.Text,"^%d%d? ?%- ?", "");
 		song = params.Song;
 		so = GAMESTATE:GetSortOrder();
+		if so and so == "SortOrder_Group" then
+			group = string.gsub(params.Text,"^%d%d? ?%- ?", "");
+		else
+			group = params.Text;
+		end;
 		--Does not work
 		--self:playcommandonchildren("Update");
 		--[[for i,a in ipairs(self:GetChildren()) do
@@ -60,7 +64,7 @@ local t = Def.ActorFrame{
 				--SCREENMAN:SystemMessage(group)
 				if group_name[group] ~= nil and group_name[group][1] then
 					local filePath = THEME:GetPathG("","_jackets/group/"..group_name[group][1]..".png");
-					self:Load(filePath)
+					self:Load(filePath):diffuse(color("#FFFFFF"))
 					self:diffusealpha(1);
 					self:y(-2)
 				else
@@ -151,10 +155,12 @@ local t = Def.ActorFrame{
 		UpdateCommand=function(self)
 			if group then
 				if so == "SortOrder_Title" then
-					if group ~= "" then
-						self:Load(THEME:GetPathG("group title",group));
-						self:diffusealpha(1);
+					if group ~= "Other" then
+						self:Load(THEME:GetPathG("group title",group..".png"));
+					else
+						self:Load(THEME:GetPathG("group title","0-9.png"));
 					end;
+					self:diffusealpha(1);
 				elseif so == "SortOrder_BPM" then
 					local n = tonumber(split("-",group)[1]);
 					if n == nil then
@@ -217,6 +223,7 @@ local t = Def.ActorFrame{
 		UpdateCommand=function(self)
 			if group then
 				if so == "SortOrder_Title" then
+<<<<<<< HEAD
 					self:visible(true);
 					self:Load(THEME:GetPathG("group name","Alphabet"));
 				elseif so == "SortOrder_AllDifficultyMeter" then
@@ -235,6 +242,26 @@ local t = Def.ActorFrame{
 					self:visible(false);
 					--genre sort
 					--[[if group == "Pop" then
+=======
+					self:diffusealpha(1);
+					self:Load(THEME:GetPathG("group name","Alphabet"));
+				elseif so == "SortOrder_AllDifficultyMeter" then
+					self:diffusealpha(1);
+					self:Load(THEME:GetPathG("group name","Dance Level"));
+				elseif so == "SortOrder_BPM" then
+					self:diffusealpha(1);
+					self:Load(THEME:GetPathG("group name","BPM"));
+				elseif so == "SortOrder_Popularity" then
+					self:diffusealpha(1);
+					self:Load(THEME:GetPathG("group name","Popularity"));
+				elseif so == "SortOrder_TopGrades" then
+					self:diffusealpha(1);
+					self:Load(THEME:GetPathG("group name","Cleared Rank"));
+				elseif so == "SortOrder_Genre" then
+					self:diffusealpha(1);
+					--genre sort
+					if group == "Pop" then
+>>>>>>> 31be6091c5fd99957f162d271afec70dd77d06cc
 					self:Load(THEME:GetPathG("group name genre","Pop"));
 					elseif group == "Anime/Game" then
 					self:Load(THEME:GetPathG("group name genre","AnimeGame"));
@@ -266,10 +293,17 @@ local t = Def.ActorFrame{
 					elseif group == "DDR" then
 					self:Load(THEME:GetPathG("group name","DDR"));
 					else
+<<<<<<< HEAD
 						self:visible(false);
 					end;]]
 				elseif so == "SortOrder_Group" or so == "SortOrder_Preferred" then
 						self:visible(false);
+=======
+						self:diffusealpha(0);
+					end;
+				elseif so == "SortOrder_Group" then
+						self:diffusealpha(0);
+>>>>>>> 31be6091c5fd99957f162d271afec70dd77d06cc
 					end;
 				end;
 			end;
