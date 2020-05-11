@@ -18,7 +18,27 @@ else
 	sStage = sStage;
 end;
 
+
+--Also do the Tohoku EVOLVED stuff here
+local song = GAMESTATE:GetCurrentSong();
+if song:GetTranslitMainTitle() == "Tohoku EVOLVED" then
+	--SCREENMAN:SystemMessage(math.random(4));
+	local choices = {
+		"Tohoku EVOLVED",
+		"Tohoku EVOLVED (TYPE2)",
+		"Tohoku EVOLVED (TYPE3)",
+		"Tohoku EVOLVED (TYPE4)"
+	}
+	randSong = SONGMAN:FindSong(choices[math.random(#choices)])
+	GAMESTATE:SetCurrentSong(randSong);
+	for pn in ivalues(GAMESTATE:GetEnabledPlayers()) do
+		local d = GAMESTATE:GetPreferredDifficulty(pn)
+		GAMESTATE:SetCurrentSteps(pn,randSong:GetOneSteps('StepsType_Dance_Single',d))
+	end;
+end;
+
 local t = Def.ActorFrame {};
+
 t[#t+1] = Def.ActorFrame {
 	InitCommand=function(self)
 		self:y(SCREEN_CENTER_Y);

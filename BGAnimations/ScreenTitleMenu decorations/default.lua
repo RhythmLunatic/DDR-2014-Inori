@@ -37,6 +37,7 @@ t[#t+1] = Def.ActorFrame {
 			elseif pref == "Current Date" then
 				self:settextf("MDX:"..region..":A:A:%04d%02d%02d%02d",Year(),MonthOfYear(),DayOfMonth(),0);
 			else
+				--self:settext("Step2014 by Rhythm Lunatic")
 				self:settext(themeInfo["Name"] .. " " .. themeInfo["Version"] .. " by " .. themeInfo["Author"]);
 				--self:settext(languageToRegion[THEME:GetCurLanguage()]);
 			end;
