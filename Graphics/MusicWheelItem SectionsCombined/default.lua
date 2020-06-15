@@ -217,7 +217,7 @@ local t = Def.ActorFrame{
 		end;
 	};
 	--Titles
-	Def.Sprite {
+	Def.Sprite{
 		Name="Title";
 		InitCommand=cmd(addx,-7;addy,-80;zoom,.7);
 		UpdateCommand=function(self)
@@ -244,7 +244,8 @@ local t = Def.ActorFrame{
 					self:visible(false);
 				end;
 			end;
-		};
+		end;
+	};
 	LoadFont("_itc avant garde std bk 20px")..{
 		Name="TitleLeftOutline";
 		InitCommand=cmd(y,-84;addx,-6;maxwidth,150);
