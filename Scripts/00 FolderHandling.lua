@@ -1,7 +1,7 @@
 
 --[[
 Parameters:
-On the Left side: the name of the song group to match
+On the Left side: the name of the song group to match. (The theme also supports groups prefixed with numbers like 00-DanceDanceRevolution 1stMIX if you want your groups to be sorted.)
 1st index: name of graphic to load in Graphics/_jackets/group and Graphics/_jackets/group/big jacket
 2nd index: The color of the back of the song items, loaded in Graphics/_jackets/backing
 3rd index: The name that's displayed on top of the gradient on the left above the music wheel
@@ -33,7 +33,8 @@ group_name = {
   ["DDR 2014 and 2015"] = 					{"15 - DDR 2014","teal","Version/DDR","#69ebca"};
   ["DanceDanceRevolution A"] = 				{"16 - DDR A","light blue","Version/DDR A ","#16b5ef"};
   ["DanceDanceRevolution Ace"] = 			{"16 - DDR A","light blue","Version/DDR A ","#16b5ef"};
-  ["DanceDanceRevolution A20"] = 			{"17 - DDR A20","orange","Version/DDR A20","#00a61c"};
+  ["DanceDanceRevolution A20"] = 			{"17 - DDR A20","orange","Version/DDR A20","#f0ab16"};
+  ["DanceDanceRevolution A20 PLUS"] =		{"18 - DDR A20 PLUS","yellow","Version/A20 PLUS","#f0ab16"};
   ["DanceDanceRevolution SuperNOVA3"] = 	{"18 - DDR SuperNOVA3","green","Version/SuperNOVA3","#81f1a9"};
   ["DanceDanceRevolution XX -Starlight-"] = {"19 - DDR XX","dark blue","Version/STARLiGHT","#001aff"};
   ["00 - BOSS ON PARADE"] = 				{"00 - BOSS ON PARADE","magenta","BOSS ON PARADE","#ae00ff"};
