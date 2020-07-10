@@ -1068,6 +1068,13 @@ end;
 
 local numwh = THEME:GetMetric("MusicWheel","NumWheelItems")+2
 local twoPartSelectActive = false;
+
+--For "Down, Down" and "Up, Up" combination on pad
+local inputHistory = {
+	["PlayerNumber_P1"] = {"",""},
+	["PlayerNumber_P2"] = {"",""}
+}
+
 local function inputs(event)
 	
 	local pn= event.PlayerNumber
@@ -1116,6 +1123,17 @@ local function inputs(event)
 		--return true
 	else
 		--SCREENMAN:SystemMessage(button)
+		inputHistory[pn][2] = inputHistory[pn][1]
+		inputHistory[pn][1] = button
+		if inputHistory[pn][1] == "Down" and inputHistory[pn][2] == "Down" then
+			ChangeSteps(pn,1);
+			inputHistory[pn][1] = "";
+			inputHistory[pn][2] = "";
+		elseif inputHistory[pn][1] == "Up" and inputHistory[pn][2] == "Up" then
+			ChangeSteps(pn,-1);
+			inputHistory[pn][1] = "";
+			inputHistory[pn][2] = "";
+		end
 		
 	end;
 end;
