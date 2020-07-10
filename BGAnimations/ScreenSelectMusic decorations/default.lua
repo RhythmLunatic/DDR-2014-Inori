@@ -501,7 +501,9 @@ t[#t+1] = Def.Quad{
 t[#t+1] = LoadFont("Common Normal")..{
 	InitCommand=cmd(horizalign,left;x,SCREEN_LEFT+100-45;y,SCREEN_BOTTOM-255-25;zoom,0.8;diffuse,color("#ffffff"););
 	OnCommand=cmd(addx,-300;linear,0.15;addx,300);
-	OffCommand=cmd(linear,0.15;addx,-300);
+	OffCommand=function(self)
+		self:linear(0.15):addx(-self:GetWidth())
+	end;
 	CurrentSongChangedMessageCommand=function(self)
 	local song = GAMESTATE:GetCurrentSong();
 	local so = GAMESTATE:GetSortOrder();
@@ -615,11 +617,16 @@ t[#t+1] = Def.ActorFrame{
 				if so == "SortOrder_Group" then
 					local group = musicWheel:GetSelectedSection();
 					--local group = getenv("getgroupname")
-					local g = GetSongGroupJacketPath(group)
-					if g then
-						self:Load(g)
+					local shortGroup = string.gsub(musicWheel:GetSelectedSection() or "","^%d%d? ?%- ?", "");
+					if group_name[shortGroup] then
+						self:Load(THEME:GetPathG("","_jackets/group/big jacket/"..group_name[shortGroup][1]));
 					else
-						self:LoadFromSongGroup(group);
+						local g = GetSongGroupJacketPath(group)
+						if g then
+							self:Load(g)
+						else
+							self:LoadFromSongGroup(group);
+						end;
 					end;
 					self:scaletoclipped(304,304);
 				elseif so == "SortOrder_Preferred" then
