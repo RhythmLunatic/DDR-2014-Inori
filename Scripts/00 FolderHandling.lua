@@ -38,6 +38,14 @@ group_name = {
   ["DanceDanceRevolution SuperNOVA3"] = 	{"18 - DDR SuperNOVA3","green","Version/SuperNOVA3","#81f1a9"};
   ["DanceDanceRevolution XX -Starlight-"] = {"19 - DDR XX","dark blue","Version/STARLiGHT","#001aff"};
   ["00 - BOSS ON PARADE"] = 				{"00 - BOSS ON PARADE","magenta","BOSS ON PARADE","#ae00ff"};
+  --CS graphics
+  ["DanceDanceRevolution HOTTEST PARTY 1"] ={"57 - DDR HOTTEST PARTY 1","light blue","Version/CS DDR HOTTEST PARTY","#85fbff"};
+  ["DanceDanceRevolution HOTTEST PARTY 2"] ={"58 - DDR HOTTEST PARTY 2","light blue","Version/CS DDR HOTTEST PARTY 2","#85fbff"};
+  ["DanceDanceRevolution HOTTEST PARTY 3"] ={"59 - DDR HOTTEST PARTY 3","purple","Version/CS DDR HOTTEST PARTY 3","#8985ff"};
+  ["DanceDanceRevolution CS Wii"] = 		{"60 - DDR CS WII","pink","Version/CS DDR WII","#eb8bc8"};
+  ["DanceDanceRevolution HOTTEST PARTY 4"] ={"60 - DDR HOTTEST PARTY 4","pink","Version/CS DDR HOTTEST PARTY 4","#eb8bc8"};
+  ["DanceDanceRevolution CS Wii II"] = 		{"61 - DDR CS 2","dark blue","Version/CS DDR WII II","#001aff"};
+  ["DanceDanceRevolution HOTTEST PARTY 5"] ={"61 - DDR HOTTEST PARTY 5","dark blue","Version/CS DDR HOTTEST PARTY 5","#001aff"};
   --Bemani sort
   ["DanceEvolution"] = 						{"DanceEvolution","lighter blue","Series/DanceEvolution","#12d0f2"};
   ["Sound Voltex"] = 						{"SDVX","pink","Series/Sound Voltex","#eb8cc8"};
