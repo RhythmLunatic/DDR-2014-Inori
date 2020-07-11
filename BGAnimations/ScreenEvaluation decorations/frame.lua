@@ -269,6 +269,7 @@ if showInstructionsTab then
 				end;
 			end;
 		end;
+		OffCommand=cmd(sleep,0.2;linear,0.2;addx,zoomTowards);
 		
 		LoadFont("Common Normal")..{
 			Text="Press left and right to switch between tabs for more detailed information.";
