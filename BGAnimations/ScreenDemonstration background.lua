@@ -5,6 +5,7 @@ local t = Def.ActorFrame{};
 local visibilityOverride = nil
 
 local function setVisibility(self)
+	do return end; --TODO: Fix it
     local song = GAMESTATE:GetCurrentSong();
     local shouldShowBGScripts = visibilityOverride or false
     if visibilityOverride == nil then
